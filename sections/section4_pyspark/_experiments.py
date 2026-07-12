@@ -599,3 +599,26 @@ print(f"AUC: {auc:.4f}   (0.5 = random)")
 preds.select("label", "striker_rate", "probability", "prediction").show(5)
 spark.stop()'''
 
+
+SNIPPETS['s2_session'] = '''import os, sys
+from pyspark.sql import SparkSession
+
+# Fix 1: Spark launches Python workers by running `python`. On Windows that
+#        can hit the Microsoft Store stub -> "Python worker failed to connect
+#        back". Point it at THIS interpreter.
+os.environ["PYSPARK_PYTHON"] = sys.executable
+os.environ["PYSPARK_DRIVER_PYTHON"] = sys.executable
+
+spark = (
+    SparkSession.builder
+    .appName("cricket-spark")
+    .master("local[*]")                     # "*" = use every CPU core
+    .config("spark.ui.enabled", "false")    # no web UI (we're inside Streamlit)
+    .config("spark.sql.shuffle.partitions", "8")   # default is 200 - too many!
+    .getOrCreate()                          # reuse a session if one exists
+)
+spark.sparkContext.setLogLevel("ERROR")     # Spark is VERY chatty otherwise
+
+print("Spark version:", spark.version)
+print("master:", spark.sparkContext.master)
+print("cores available:", spark.sparkContext.defaultParallelism)'''

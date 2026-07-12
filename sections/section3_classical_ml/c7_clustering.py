@@ -128,6 +128,7 @@ ax.set_xlabel("K")
 ax.set_ylabel("final inertia")
 ax.grid(alpha=0.25)
 ax.set_title("inertia vs K, each computed by a real k-means run", fontsize=10)
+fig.tight_layout()
 st.pyplot(fig)
 plt.close(fig)
 st.markdown(

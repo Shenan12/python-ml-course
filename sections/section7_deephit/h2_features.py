@@ -40,7 +40,16 @@ if res is None:
     st.stop()
 
 st.header("1 · The censoring is real")
-df = cricket.engineer(cricket.load_raw())
+try:
+    df = cricket.engineer(cricket.load_raw())
+except FileNotFoundError:
+    st.error(
+        "**The cricket dataset is missing** (`data/odi_batting_innings.csv`). "
+        "If you are deploying, make sure the `data/` folder is committed to "
+        "the repository. To rebuild it locally: "
+        "`python scripts/prepare_cricket_data.py`."
+    )
+    st.stop()
 
 c1, c2, c3, c4 = st.columns(4)
 c1.metric("innings", f"{len(df):,}")
@@ -69,6 +78,7 @@ axes[1].set_xlabel("batting position")
 axes[1].set_ylabel("proportion NOT OUT")
 axes[1].set_title("censoring is not random!", fontsize=10)
 axes[1].grid(alpha=0.2, axis="y")
+fig.tight_layout()
 st.pyplot(fig)
 plt.close(fig)
 
@@ -162,6 +172,7 @@ for i, v in enumerate([c_time, c_random]):
 ax.set_xlim(0.55, max(c_time, c_random) + 0.02)
 ax.set_xlabel("C-index (DeepSurv, identical model & features)")
 ax.grid(alpha=0.25, axis="x")
+fig.tight_layout()
 st.pyplot(fig)
 plt.close(fig)
 

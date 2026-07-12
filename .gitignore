@@ -4,3 +4,17 @@ __pycache__/
 venv/
 .env
 .streamlit/secrets.toml
+
+# the bundled JDK (304 MB — too big for git; each machine gets its own)
+.jdk/
+
+# Spark scratch (should land in temp now, but belt-and-braces)
+derby.log
+metastore_db/
+spark-warehouse/
+
+# streamlit's local cache
+.streamlit/cache/
+
+# NOTE: data/ and artifacts/ are deliberately NOT ignored.
+# The app needs both at runtime — commit them.

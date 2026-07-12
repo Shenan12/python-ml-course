@@ -138,7 +138,7 @@ n_trials = st.select_slider("number of random trials", [5, 10, 20], value=10)
 
 
 @st.cache_data(show_spinner="Running the random search for real — every trial "
-                            "is a full DeepSurv fit…", persist="disk")
+                            "is a full DeepSurv fit…")
 def random_search_live(n_trials):
     """Only ever called when you press ▶ Run the search live."""
     return experiments.random_search_experiment(n_trials)
@@ -205,7 +205,7 @@ for ax, col, logx in [(axes[0], "learning rate", True),
     ax.set_xlabel(col)
     ax.set_ylabel("validation C-index")
     ax.grid(alpha=0.25)
-fig.suptitle("each dot is one real DeepSurv fit; ⭐ = the winner", fontsize=10)
+fig.suptitle("each dot is one real DeepSurv fit; ★ = the winner", fontsize=10)
 fig.tight_layout()
 st.pyplot(fig)
 plt.close(fig)

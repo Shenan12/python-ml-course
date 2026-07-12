@@ -99,6 +99,7 @@ with c2:
     ax.set_title(f"the 12 learned weights\nΣw² = {np.sum(coefs**2):.3g}",
                  fontsize=10)
     ax.grid(alpha=0.25, axis="y")
+    fig.tight_layout()
     st.pyplot(fig)
     plt.close(fig)
 

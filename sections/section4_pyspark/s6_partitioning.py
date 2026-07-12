@@ -53,7 +53,7 @@ for i in range(8):
                            linewidth=1.8))
     ax.text(i * 1.24 + 0.52, 1.15, f"core {i + 1}", ha="center", fontsize=8)
     ax.text(i * 1.24 + 0.52, 0.78,
-            f"{int(counts['count'].sum()):,}\nrows" if used else "idle 😴",
+            f"{int(counts['count'].sum()):,}\nrows" if used else "(idle)",
             ha="center", fontsize=7.5,
             color="#1b5e20" if used else "#b0bec5")
 ax.set_xlim(-0.2, 10.2)
@@ -99,6 +99,7 @@ ax.set_xticks(timings["partitions"])
 ax.set_xticklabels(timings["partitions"])
 ax.legend(fontsize=8)
 ax.grid(alpha=0.25)
+fig.tight_layout()
 st.pyplot(fig)
 plt.close(fig)
 st.dataframe(timings.round(3), hide_index=True, width="stretch")

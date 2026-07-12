@@ -74,6 +74,7 @@ ax.set_xlabel("bin index")
 ax.set_ylabel("innings in bin")
 ax.set_title("how many innings land in each bin?", fontsize=10)
 ax.grid(alpha=0.25, axis="y")
+fig.tight_layout()
 st.pyplot(fig)
 plt.close(fig)
 

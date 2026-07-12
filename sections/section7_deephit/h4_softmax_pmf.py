@@ -107,6 +107,7 @@ axes[2].legend(fontsize=8)
 axes[2].set_title("Survival = 1 − CIF", fontsize=10)
 for ax in axes:
     ax.grid(alpha=0.25)
+fig.tight_layout()
 st.pyplot(fig)
 plt.close(fig)
 st.caption(f"📦 {artifacts.provenance(res)} — predictions from the tuned "

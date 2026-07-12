@@ -66,12 +66,15 @@ ax.plot(by_over["over"], by_over["boundary_rate"] * 100, color="#c62828",
         linewidth=2.2, marker="o", markersize=3)
 ax.axvspan(0, 10, color="#bbdefb", alpha=0.5)
 ax.axvspan(40, 50, color="#ffcdd2", alpha=0.5)
-ax.text(5, 1.5, "powerplay\n(field up)", ha="center", fontsize=8)
-ax.text(45, 1.5, "death overs\n(all-out attack)", ha="center", fontsize=8)
+ax.text(0.10, 0.06, "powerplay\n(field up)", ha="center", fontsize=8,
+        transform=ax.transAxes)
+ax.text(0.90, 0.06, "death overs\n(all-out attack)", ha="center", fontsize=8,
+        transform=ax.transAxes)
 ax.set_xlabel("over")
 ax.set_ylabel("% of balls hit for 4 or 6")
 ax.grid(alpha=0.25)
 ax.set_title("the signal the model has to find (real data)", fontsize=10)
+fig.tight_layout()
 st.pyplot(fig)
 plt.close(fig)
 st.caption("Boundary rate is high in the powerplay, dips in the middle overs, "

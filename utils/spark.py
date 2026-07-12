@@ -31,6 +31,19 @@ INNINGS = ROOT / "data" / "odi_batting_innings.csv"
 JDK_DIR = ROOT / ".jdk"
 
 
+def _java_major(java_exe: str) -> int | None:
+    """Parse the major version out of `java -version` (e.g. 17, 21, 25)."""
+    import re
+    import subprocess
+    try:
+        out = subprocess.run([java_exe, "-version"], capture_output=True,
+                             text=True, timeout=30)
+        m = re.search(r'version "(\d+)', out.stderr + out.stdout)
+        return int(m.group(1)) if m else None
+    except Exception:  # noqa: BLE001
+        return None
+
+
 def find_java_home() -> str | None:
     """Find a JDK that Spark can actually use.
 
@@ -40,8 +53,11 @@ def find_java_home() -> str | None:
     `UnsupportedOperationException: getSubject is not supported` the moment you
     read a file.
 
-    This machine's system Java is 25, so the course ships a private JDK 17 in
-    `.jdk/` and points Spark at it — without touching your system Java.
+    Search order:
+      1. a private JDK bundled in `.jdk/` (how this course runs on a Windows
+         machine whose system Java is 25 — the system Java is untouched);
+      2. the system Java, IF it is version 17 or 21 (this is how a deployed
+         Streamlit Cloud app finds the JDK installed via `packages.txt`).
     """
     if JDK_DIR.is_dir():
         for candidate in sorted(JDK_DIR.glob("jdk-1[78]*")) + \
@@ -49,7 +65,14 @@ def find_java_home() -> str | None:
             if (candidate / "bin" / "java.exe").exists() or \
                     (candidate / "bin" / "java").exists():
                 return str(candidate)
-    return None
+    # fall back to the system Java if it's a supported version
+    import shutil
+    system_java = shutil.which("java")
+    if system_java:
+        major = _java_major(system_java)
+        if major in (17, 21):
+            return None          # None = "leave JAVA_HOME alone, system is fine"
+    return "UNSUPPORTED"
 
 
 def configure_env() -> None:
@@ -60,16 +83,36 @@ def configure_env() -> None:
     os.environ.setdefault("PYSPARK_PYTHON", sys.executable)
     os.environ.setdefault("PYSPARK_DRIVER_PYTHON", sys.executable)
 
-    # 2. Use a Spark-supported JDK (17/21), not the system's Java 25.
+    # 2. Use a Spark-supported JDK (17/21).
     java_home = find_java_home()
+    if java_home == "UNSUPPORTED":
+        raise RuntimeError(
+            "Spark 4 needs Java 17 or 21, and none was found. "
+            "Locally: install Temurin 17 (https://adoptium.net) or unzip one "
+            "into the project's .jdk/ folder. "
+            "On Streamlit Community Cloud: add a `packages.txt` file "
+            "containing the line `openjdk-17-jre-headless` (this repo ships "
+            "one). Note Java 22+ does NOT work — Spark's file layer fails "
+            "with 'getSubject is not supported'."
+        )
     if java_home:
         os.environ["JAVA_HOME"] = java_home
 
 
 def build_session(app_name: str = "cricket-spark", shuffle_partitions: int = 8):
     """A small, quiet, laptop-friendly SparkSession in local mode."""
+    import tempfile
+
     configure_env()
     from pyspark.sql import SparkSession
+
+    # Spark scribbles scratch files as it works: shuffle spills, the SQL
+    # warehouse directory, Derby's metastore log. By default those land in the
+    # CURRENT WORKING DIRECTORY — which on a deployed app may be read-only and
+    # give you PermissionError. Point every one of them at the temp dir, which
+    # is writable everywhere.
+    scratch = Path(tempfile.gettempdir()) / "ml_course_spark"
+    scratch.mkdir(exist_ok=True)
 
     spark = (
         SparkSession.builder
@@ -79,6 +122,10 @@ def build_session(app_name: str = "cricket-spark", shuffle_partitions: int = 8):
         .config("spark.sql.shuffle.partitions", str(shuffle_partitions))
         .config("spark.driver.memory", "2g")
         .config("spark.sql.adaptive.enabled", "false")  # keep plans predictable
+        .config("spark.local.dir", str(scratch / "local"))
+        .config("spark.sql.warehouse.dir", (scratch / "warehouse").as_uri())
+        .config("spark.driver.extraJavaOptions",
+                f"-Dderby.system.home={scratch / 'derby'}")
         .getOrCreate()
     )
     spark.sparkContext.setLogLevel("ERROR")

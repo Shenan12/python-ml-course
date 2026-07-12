@@ -113,7 +113,7 @@ for b in blocks:
                            linewidth=2 if executed else 1))
     ax.text(0.65, y + 0.36, labels[b], va="center", fontsize=10,
             color="#1b5e20" if executed else "#90a4ae")
-    ax.text(8.0, y + 0.36, "✅ ran" if executed else "skipped", va="center",
+    ax.text(8.0, y + 0.36, "✓ ran" if executed else "skipped", va="center",
             fontsize=9, color="#2e7d32" if executed else "#b0bec5")
     positions[b] = y
     y -= 1

@@ -73,9 +73,9 @@ ax.text(0, 1.75, "dataset in stored order → sorted weakest to strongest",
 handles = [plt.Rectangle((0, 0), 1, 1, facecolor=c) for c in COLOURS.values()]
 ax.legend(handles, [f"train ({n_train})", f"val ({n_val})",
                     f"test ({n - n_train - n_val})"],
-          loc="lower right", fontsize=8, ncol=3, bbox_to_anchor=(1.0, -0.5))
+          loc="lower right", fontsize=8, ncol=3, bbox_to_anchor=(1.0, 0.0))
 ax.set_xlim(-0.3, n + 0.3)
-ax.set_ylim(-0.2, 2.1)
+ax.set_ylim(-1.0, 2.1)
 ax.axis("off")
 st.pyplot(fig)
 plt.close(fig)

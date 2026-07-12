@@ -67,7 +67,7 @@ for i, label in enumerate(labels):
             color="#263238" if built else "#b0bec5")
     if built:
         ax.text(7.35, y * 0.62 + 0.25,
-                "✅ EXECUTED" if fired else "📝 planned only — 0 rows touched",
+                "EXECUTED" if fired else "planned only — 0 rows touched",
                 va="center", fontsize=7.5,
                 color="#2e7d32" if fired else "#f57f17")
     if i < len(labels) - 1 and i < stage:
@@ -79,7 +79,7 @@ for i, label in enumerate(labels):
 if fired:
     ax.add_patch(Rectangle((1.6, -0.85), 5.6, 0.55, facecolor="#c62828",
                            edgecolor="#8e0000", linewidth=2))
-    ax.text(4.4, -0.58, "ACTION: .toPandas()  ⚡ NOW everything runs",
+    ax.text(4.4, -0.58, "ACTION: .toPandas() — NOW everything runs",
             ha="center", va="center", fontsize=10, color="white",
             fontweight="bold")
 elif stage == n_steps:
@@ -109,7 +109,7 @@ else:
 
 st.header("2 · The timings prove it")
 fig, ax = plt.subplots(figsize=(9, 2.8))
-ys = list(steps["transformation"]) + ["⚡ ACTION: .toPandas()"]
+ys = list(steps["transformation"]) + ["ACTION: .toPandas()"]
 vals = list(steps["seconds"] * 1000) + [t_action * 1000]
 colours = ["#ffd54f"] * len(steps) + ["#c62828"]
 ax.barh(ys[::-1], vals[::-1], color=colours[::-1], edgecolor="white")
@@ -117,6 +117,7 @@ for i, v in enumerate(vals[::-1]):
     ax.text(v + 20, i, f"{v:.0f} ms", va="center", fontsize=8.5)
 ax.set_xlabel("milliseconds")
 ax.set_xlim(0, max(vals) * 1.22)
+fig.tight_layout()
 st.pyplot(fig)
 plt.close(fig)
 

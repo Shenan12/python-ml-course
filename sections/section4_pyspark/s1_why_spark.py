@@ -50,6 +50,7 @@ for i, v in enumerate([disk, mem]):
     ax.text(v + mem * 0.01, i, f"{v:.1f} MB", va="center", fontsize=10)
 ax.set_xlabel("megabytes")
 ax.set_xlim(0, mem * 1.18)
+fig.tight_layout()
 st.pyplot(fig)
 plt.close(fig)
 st.caption(f"📦 {artifacts.provenance(res)} — measured on your machine.")
@@ -101,7 +102,7 @@ ax.add_patch(plt.Rectangle((0.6, 1.5), 3.2, 1.5, facecolor="#ffcdd2",
 ax.text(2.2, 2.55, "ONE process", ha="center", fontsize=9)
 ax.text(2.2, 2.15, "the WHOLE dataset\nmust fit in RAM", ha="center",
         fontsize=8.5)
-ax.text(2.2, 1.7, "💥 dies when it doesn't", ha="center", fontsize=9,
+ax.text(2.2, 1.7, "DIES when it doesn't", ha="center", fontsize=9,
         color="#c62828")
 
 ax.text(7.4, 3.3, "Spark", ha="center", fontsize=12, fontweight="bold",
@@ -157,6 +158,7 @@ for i, (a, b) in enumerate([(t_pl, t_pa), (t_sl, t_sa)]):
     ax.text(a + b + 0.05, i, f"{a + b:.2f}s total", va="center", fontsize=9)
 ax.set_xlabel("seconds")
 ax.legend(fontsize=8)
+fig.tight_layout()
 st.pyplot(fig)
 plt.close(fig)
 

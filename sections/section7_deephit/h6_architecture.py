@@ -104,7 +104,15 @@ compete with one another:
 """
 )
 
-df = cricket.load_raw()
+try:
+    df = cricket.load_raw()
+except FileNotFoundError:
+    st.error(
+        "**The cricket dataset is missing** (`data/odi_batting_innings.csv`). "
+        "If deploying, commit the `data/` folder; locally, run "
+        "`python scripts/prepare_cricket_data.py`."
+    )
+    st.stop()
 wt = (df[df.event == 1]["wicket_type"].value_counts(normalize=True) * 100)
 wt = wt[wt >= 1.0]
 
@@ -116,6 +124,7 @@ ax.set_xlabel("% of dismissals")
 ax.set_title("how ODI batters actually get out (real Cricsheet data)",
              fontsize=10)
 ax.grid(alpha=0.25, axis="x")
+fig.tight_layout()
 st.pyplot(fig)
 plt.close(fig)
 

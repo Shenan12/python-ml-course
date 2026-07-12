@@ -1,3 +1,4 @@
+import tempfile
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -18,7 +19,11 @@ one, so this page matters more than it looks.
 """
 )
 
-DATA_DIR = Path(__file__).resolve().parents[2] / "data"
+# We write into the system TEMP folder, not the project folder. Two reasons,
+# both worth knowing: (1) scratch files don't belong next to your code, and
+# (2) a deployed app's project folder is often READ-ONLY — writing there gives
+# you PermissionError. The temp folder is writable everywhere.
+DATA_DIR = Path(tempfile.gettempdir()) / "ml_course_files"
 DATA_DIR.mkdir(exist_ok=True)
 SAMPLE = DATA_DIR / "shopping_list.txt"
 SAMPLE.write_text("milk\neggs\nbread\ntea\n", encoding="utf-8")
@@ -26,7 +31,9 @@ SAMPLE.write_text("milk\neggs\nbread\ntea\n", encoding="utf-8")
 st.info(
     f"This page just created a real file on your disk at "
     f"`{SAMPLE}` containing four lines: milk, eggs, bread, tea. "
-    "Everything below reads that actual file."
+    "Everything below reads that actual file. (It lives in your system's "
+    "**temp folder** — the polite home for scratch files, and the only place "
+    "guaranteed writable when an app is deployed to a server.)"
 )
 
 st.header("1 · What a text file really is: one long tape of characters")
@@ -149,7 +156,7 @@ print("average age:", df["age"].mean())''',
 )
 
 sandbox(
-    f'''# Your own file playground. This writes into the course's data folder.
+    f'''# Your own file playground. This writes into your system temp folder.
 path = r"{DATA_DIR / 'my_experiments.txt'}"
 
 scores = [72, 85, 90, 66]

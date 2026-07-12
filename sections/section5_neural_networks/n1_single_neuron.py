@@ -127,6 +127,7 @@ ax.set_xlabel("score z")
 ax.set_ylabel("σ(z) = P(fail)")
 ax.legend(fontsize=9)
 ax.grid(alpha=0.25)
+fig.tight_layout()
 st.pyplot(fig)
 plt.close(fig)
 st.markdown(
@@ -170,6 +171,7 @@ for col, (Xd, yd, model, title) in zip(
         ax.set_xlabel("vibration")
         ax.set_ylabel("temperature")
         ax.set_title(f"{title}\naccuracy {acc:.0%}", fontsize=9)
+        fig.tight_layout()
         st.pyplot(fig)
         plt.close(fig)
 

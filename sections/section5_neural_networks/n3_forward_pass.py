@@ -132,8 +132,8 @@ ax.text(pos_out[0], pos_out[1] + 0.12, f"z={z2:+.2f}", ha="center",
         fontsize=8)
 ax.text(pos_out[0], pos_out[1] - 0.17, f"σ→{p:.2f}", ha="center", fontsize=10,
         fontweight="bold")
-ax.text(pos_out[0], pos_out[1] - 0.78, f"P(fail)\n(bias {b2:+.2f})",
-        ha="center", fontsize=7.5, color="#546e7a")
+ax.text(pos_out[0], pos_out[1] - 0.62, f"P(fail)\n(bias {b2:+.2f})",
+        ha="center", va="top", fontsize=7.5, color="#546e7a")
 ax.set_xlim(0, 10.2)
 ax.set_ylim(0.1, 4.3)
 ax.axis("off")

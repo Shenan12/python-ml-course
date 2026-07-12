@@ -117,8 +117,7 @@ treatment as a covariate) and a DeepSurv network.
 )
 
 
-@st.cache_data(show_spinner="Fitting Cox and training DeepSurv for real…",
-               persist="disk")
+@st.cache_data(show_spinner="Fitting Cox and training DeepSurv for real…")
 def fit_both_live():
     return experiments.recommender_experiment()
 

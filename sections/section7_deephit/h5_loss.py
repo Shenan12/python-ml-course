@@ -97,6 +97,7 @@ ax.grid(alpha=0.25)
 ax.text(-0.75, 3.4, "WRONG ORDER\n(penalty explodes)", fontsize=8,
         color="#c62828")
 ax.text(0.35, 0.35, "right order\n(penalty ≈ 0)", fontsize=8, color="#2e7d32")
+fig.tight_layout()
 st.pyplot(fig)
 plt.close(fig)
 st.caption(
@@ -130,6 +131,7 @@ axes[1].set_ylabel("IBS (calibration error)")
 axes[1].set_title("lower is better", fontsize=10)
 for ax in axes:
     ax.grid(alpha=0.25)
+fig.tight_layout()
 st.pyplot(fig)
 plt.close(fig)
 st.dataframe(

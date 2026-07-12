@@ -1,3 +1,9 @@
+# On Linux (e.g. Streamlit Community Cloud), plain `pip install torch` pulls
+# the multi-gigabyte CUDA build and blows the deployment's resource limits.
+# This extra index makes pip prefer the small CPU-only wheels instead.
+# (Harmless on Windows/Mac.)
+--extra-index-url https://download.pytorch.org/whl/cpu
+
 # Core app
 streamlit>=1.49
 streamlit-ace>=0.1.1
@@ -5,6 +11,7 @@ streamlit-ace>=0.1.1
 # Data & plotting
 numpy>=2.0
 pandas>=2.2,<3        # pycox's dependency chain requires pandas < 3
+pyarrow>=14           # parquet support for pandas (Section 4's dataset)
 matplotlib>=3.9
 plotly>=5.24
 

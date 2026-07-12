@@ -84,7 +84,7 @@ else:
 
 
 @st.cache_data(show_spinner="Fitting Cox and training DeepSurv for real — "
-                            "this takes ~20 s…", persist="disk")
+                            "this takes ~20 s…")
 def run_experiment_live(risk, n_train, early_stop):
     """Only ever called when you press ▶ Train — see the note below."""
     return experiments.simulation_experiment(risk, n_train, early_stop)
@@ -170,6 +170,7 @@ with st.expander("📉 The training curves — and what early stopping is doing"
     ax.set_ylabel("Cox negative log partial likelihood")
     ax.legend(fontsize=8)
     ax.grid(alpha=0.25)
+    fig.tight_layout()
     st.pyplot(fig)
     plt.close(fig)
     if early_stop:
@@ -281,6 +282,7 @@ for ax, r, name, c in [(axes[0], cox_risk, "linear Cox", c_cox),
     ax.legend(fontsize=7)
     ax.set_title(f"{name} — C-index {c:.3f}", fontsize=10)
     ax.grid(alpha=0.2)
+fig.tight_layout()
 st.pyplot(fig)
 plt.close(fig)
 st.caption(

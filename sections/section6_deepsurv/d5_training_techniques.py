@@ -56,8 +56,7 @@ say what I expected them to.
 )
 
 
-@st.cache_data(show_spinner="Training all four configurations for real…",
-               persist="disk")
+@st.cache_data(show_spinner="Training all four configurations for real…")
 def compare_standardization_live():
     return experiments.standardization_experiment()
 
@@ -160,6 +159,7 @@ ax.grid(alpha=0.25)
 ax.set_title(f"lr₀={lr0} , decay={decay} → after 500 epochs the step size is "
              f"{lrs[-1]:.5f} ({lrs[-1] / lr0:.0%} of the original)",
              fontsize=10)
+fig.tight_layout()
 st.pyplot(fig)
 plt.close(fig)
 if decay == 0.0:
@@ -245,6 +245,7 @@ ax.set_ylabel("w₁ (a steeply-curved direction)")
 ax.legend(fontsize=8, loc="upper right")
 ax.set_title("60 steps each, same start, on a stretched loss surface",
              fontsize=10)
+fig.tight_layout()
 st.pyplot(fig)
 plt.close(fig)
 st.markdown(

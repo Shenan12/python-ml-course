@@ -52,6 +52,7 @@ with c1:
                 f"{t * 1000:.2f} ms", fontsize=10, va="center")
     ax.set_xlabel("time to square 300,000 numbers (milliseconds)")
     ax.set_xlim(0, t_loop * 1000 * 1.25)
+    fig.tight_layout()
     st.pyplot(fig)
     plt.close(fig)
 with c2:

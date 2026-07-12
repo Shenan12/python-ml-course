@@ -1,0 +1,14 @@
+{
+  "stdout": "Spark version: 4.1.2\nmaster: local[*]\ncores available: 22\n",
+  "code_hash": "6bc3dbe6c1bf7bc6",
+  "_meta": {
+    "computed_at": "2026-07-12 16:02",
+    "seed": 0,
+    "versions": {
+      "torch": "2.13.0+cpu",
+      "scikit-learn": "1.9.0",
+      "numpy": "2.4.6"
+    },
+    "array_keys": []
+  }
+}

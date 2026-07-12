@@ -53,7 +53,7 @@ if want_labels:
     ax.set_xlabel("week of term")
     ax.set_ylabel("average mark")
     ax.annotate("axis label — set_xlabel()", xy=(0.55, -0.09),
-                xycoords="axes fraction", xytext=(0.72, -0.16),
+                xycoords="axes fraction", xytext=(0.72, -0.13),
                 fontsize=8, color="#8e24aa",
                 arrowprops=dict(arrowstyle="->", color="#8e24aa"))
 if want_legend:
@@ -68,6 +68,7 @@ if want_markers:
     ax.annotate("a marker — marker='o'", xy=(4, newton[3]),
                 xytext=(4.6, 63.5), fontsize=8, color="#8e24aa",
                 arrowprops=dict(arrowstyle="->", color="#8e24aa"))
+fig.tight_layout()
 st.pyplot(fig)
 plt.close(fig)
 

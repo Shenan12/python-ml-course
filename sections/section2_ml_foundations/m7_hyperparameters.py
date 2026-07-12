@@ -133,7 +133,7 @@ ax.set_yticklabels(DEGREES)
 ax.set_xlabel("λ")
 ax.set_ylabel("degree")
 ax.set_title("validation MSE for every (degree, λ) pair — "
-             f"best: degree {DEGREES[bi]}, λ {LAMBDAS[bj]:g}  ⭐",
+             f"best: degree {DEGREES[bi]}, λ {LAMBDAS[bj]:g}  ★",
              fontsize=10)
 st.pyplot(fig)
 plt.close(fig)

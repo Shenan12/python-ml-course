@@ -185,14 +185,59 @@ python scripts/prepare_cricket_data.py
   Deep Learning Approach to Survival Analysis with Competing Risks.*
   Proceedings of the AAAI Conference on Artificial Intelligence, 32(1).
 
+## Deploying to Streamlit Community Cloud
+
+The app is deployable, and several things in this repo exist specifically to
+make that work. If you fork/redeploy, keep them:
+
+1. **Commit `data/` and `artifacts/`.** The app reads both at runtime
+   (~7 MB + ~3 MB). Without them, pages show a "run build_artifacts.py" notice
+   instead of results.
+2. **`packages.txt`** installs **Java 17** on the cloud machine — required by
+   the PySpark section's ▶ Run buttons. (Spark 4 needs Java 17/21; Java 22+
+   fails with `getSubject is not supported`.)
+3. **`requirements.txt` starts with a PyTorch CPU index line.** Without it,
+   Linux pip installs the multi-gigabyte CUDA build of torch and the deploy
+   blows its resource limits.
+4. **`.jdk/` is gitignored** (it's a 304 MB Windows convenience for this
+   machine). The cloud gets Java from `packages.txt` instead.
+5. **All scratch files go to the system temp folder** — the File I/O page's
+   demo files and Spark's shuffle/warehouse/Derby files. A deployed app's
+   project folder may be read-only; writing there is what causes
+   `PermissionError` crashes. If you add new pages, follow the same rule:
+   never write into the repo folder at runtime.
+
+Heads-up on expectations: the heavy pages show **precomputed results**
+everywhere, so the deployed app is fast. The ▶ "Run live" buttons genuinely
+retrain on the cloud machine — the DeepSurv/DeepHit ones take their stated
+times; the Spark ones additionally boot a JVM (~20 s extra on first press).
+
 ## Project layout
 
 ```
-app.py                     entry point - streamlit run app.py
-requirements.txt
-utils/sandbox.py           the shared "run this code and show the result" engine
-sections/home.py           welcome page
-sections/section1_python/  the 8 pages of Section 1
-sections/section2_...7     placeholders until each section is built
-data/                      small files created live by the File I/O page
+app.py                       entry point — streamlit run app.py
+requirements.txt             python dependencies (note the torch CPU index line)
+packages.txt                 apt packages for Streamlit Cloud (Java 17 for Spark)
+build_artifacts.py           re-runs every heavy computation and refreshes artifacts/
+utils/
+  sandbox.py                 the "run this code and show the result" engine
+  artifacts.py               the precomputed-results store (provenance + code hashes)
+  mockdata.py                shared mock datasets (patients, pumps, machines)
+  cricket.py                 the ODI survival dataset loader + feature engineering
+  spark.py                   SparkSession builder (Java detection, temp dirs, fixes)
+scripts/
+  prepare_cricket_data.py    rebuilds data/odi_batting_innings.csv from Cricsheet
+  prepare_spark_data.py      rebuilds data/odi_deliveries.parquet from Cricsheet
+sections/
+  home.py                    welcome page
+  section1_python/           p1–p8   Python fundamentals
+  section2_ml_foundations/   m1–m7   ML foundations
+  section3_classical_ml/     c1–c10  classical algorithms (incl. AIC)
+  section4_pyspark/          s1–s8   PySpark & big data
+  section5_neural_networks/  n1–n7   neural networks
+  section6_deepsurv/         d1–d8   DeepSurv, in full
+  section7_deephit/          h1–h7   DeepHit, in full
+data/                        the real cricket datasets (committed — the app needs them)
+artifacts/                   precomputed results (committed — the app needs them)
+.jdk/                        local-only Java 17 for Spark (gitignored)
 ```
