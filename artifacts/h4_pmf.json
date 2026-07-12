@@ -1,0 +1,22 @@
+{
+  "meta_csv": "label,batter,position,career_avg,balls_faced,event\r\n\"top-order, in form\",DP Conway,2,42.5,1,1\r\nmiddle order,DJ Mitchell,4,53.285714285714285,55,1\r\ntailender,MJ Santner,8,27.81578947368421,18,1\r\n",
+  "_meta": {
+    "computed_at": "2026-07-12 09:57",
+    "seed": 0,
+    "versions": {
+      "torch": "2.13.0+cpu",
+      "scikit-learn": "1.9.0",
+      "numpy": "2.4.6"
+    },
+    "array_keys": [
+      "cuts",
+      "pmf_middle_order",
+      "pmf_tailender",
+      "pmf_top-order_in_form",
+      "surv_index",
+      "surv_middle_order",
+      "surv_tailender",
+      "surv_top-order_in_form"
+    ]
+  }
+}

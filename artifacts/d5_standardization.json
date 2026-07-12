@@ -1,0 +1,25 @@
+{
+  "raw_SGD_diverged": true,
+  "raw_SGD_cindex": NaN,
+  "raw_Adam_diverged": false,
+  "raw_Adam_cindex": 0.5680994627014869,
+  "standardized_SGD_diverged": false,
+  "standardized_SGD_cindex": 0.5044983131325753,
+  "standardized_Adam_diverged": false,
+  "standardized_Adam_cindex": 0.5657878295639135,
+  "_meta": {
+    "computed_at": "2026-07-12 09:17",
+    "seed": 0,
+    "versions": {
+      "torch": "2.13.0+cpu",
+      "scikit-learn": "1.9.0",
+      "numpy": "2.4.6"
+    },
+    "array_keys": [
+      "raw_Adam_hist",
+      "raw_SGD_hist",
+      "standardized_Adam_hist",
+      "standardized_SGD_hist"
+    ]
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "stdout": "+------------+-----+-----+-----------+\n|batting_team|balls|runs |strike_rate|\n+------------+-----+-----+-----------+\n|England     |19349|18887|97.6       |\n|South Africa|19143|18227|95.2       |\n|India       |24190|23018|95.2       |\n|Australia   |20514|18787|91.6       |\n|New Zealand |21424|19521|91.1       |\n|Pakistan    |18344|16270|88.7       |\n+------------+-----+-----+-----------+\nonly showing top 6 rows\ntype: DataFrame\ncolumns: ['batting_team', 'balls', 'runs', 'strike_rate']\n",
+  "code_hash": "f243bb09e0c94322",
+  "_meta": {
+    "computed_at": "2026-07-12 10:46",
+    "seed": 0,
+    "versions": {
+      "torch": "2.13.0+cpu",
+      "scikit-learn": "1.9.0",
+      "numpy": "2.4.6"
+    },
+    "array_keys": []
+  }
+}

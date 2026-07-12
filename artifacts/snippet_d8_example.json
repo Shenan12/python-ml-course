@@ -1,0 +1,14 @@
+{
+  "stdout": "trial 1: depth=3 nodes=32 lr=0.0553 drop=0.49 -> val C-index 0.5744\ntrial 2: depth=1 nodes=16 lr=0.0483 drop=0.10 -> val C-index 0.5630\ntrial 3: depth=1 nodes=48 lr=0.0047 drop=0.25 -> val C-index 0.5441\ntrial 4: depth=3 nodes=16 lr=0.0041 drop=0.35 -> val C-index 0.5084\ntrial 5: depth=2 nodes=48 lr=0.0303 drop=0.41 -> val C-index 0.5792\ntrial 6: depth=2 nodes=8 lr=0.0008 drop=0.41 -> val C-index 0.5093\ntrial 7: depth=2 nodes=8 lr=0.0061 drop=0.33 -> val C-index 0.5783\ntrial 8: depth=3 nodes=32 lr=0.0061 drop=0.35 -> val C-index 0.5213\n\nWINNER: val C-index 0.5792 with depth=2, nodes=48, lr=0.0303, dropout=0.41\n",
+  "code_hash": "7f55d8c5c2de9014",
+  "_meta": {
+    "computed_at": "2026-07-12 09:17",
+    "seed": 0,
+    "versions": {
+      "torch": "2.13.0+cpu",
+      "scikit-learn": "1.9.0",
+      "numpy": "2.4.6"
+    },
+    "array_keys": []
+  }
+}

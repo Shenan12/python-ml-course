@@ -1,0 +1,14 @@
+{
+  "stdout": "partitions as read: 1\n+------------+-------+\n|partition_id|  count|\n+------------+-------+\n|           0|1351138|\n+------------+-------+\n\n--- narrow plan (no Exchange) ---\n== Physical Plan ==\n*(1) Filter (isnotnull(runs_off_bat#221) AND (runs_off_bat#221 >= 4))\n+- *(1) ColumnarToRow\n   +- FileScan parquet [match_id#211L,year#212,venue#213,innings#214,over#215,ball#216,batting_team#217,bowling_team#218,striker#219,bowler#220,runs_off_bat#221,extras#222,is_wide#223,is_wicket#224,wicket_type#225] Batched: true, DataFilters: [isnotnull(runs_off_bat#221), (runs_off_bat#221 >= 4)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/D:/python-ml-course/data/odi_deliveries.parquet], PartitionFilters: [], PushedFilters: [IsNotNull(runs_off_bat), GreaterThanOrEqual(runs_off_bat,4)], ReadSchema: struct<match_id:bigint,year:int,venue:string,innings:tinyint,over:smallint,ball:double,batting_te...\n\n\n--- wide plan (look for 'Exchange hashpartitioning') ---\n== Physical Plan ==\n*(2) HashAggregate(keys=[striker#219], functions=[sum(runs_off_bat#221)])\n+- Exchange hashpartitioning(striker#219, 8), ENSURE_REQUIREMENTS, [plan_id=373]\n   +- *(1) HashAggregate(keys=[striker#219], functions=[partial_sum(runs_off_bat#221)])\n      +- *(1) ColumnarToRow\n         +- FileScan parquet [striker#219,runs_off_bat#221] Batched: true, DataFilters: [], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/D:/python-ml-course/data/odi_deliveries.parquet], PartitionFilters: [], PushedFilters: [], ReadSchema: struct<striker:string,runs_off_bat:smallint>\n\n\n",
+  "code_hash": "4b25495e6cb2b39b",
+  "_meta": {
+    "computed_at": "2026-07-12 10:46",
+    "seed": 0,
+    "versions": {
+      "torch": "2.13.0+cpu",
+      "scikit-learn": "1.9.0",
+      "numpy": "2.4.6"
+    },
+    "array_keys": []
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "c_cox": 0.775556301840615,
+  "c_ds": 0.7726396562590571,
+  "epochs_run": 45,
+  "early_stop": true,
+  "max_epochs": 512,
+  "_meta": {
+    "computed_at": "2026-07-12 09:17",
+    "seed": 0,
+    "versions": {
+      "torch": "2.13.0+cpu",
+      "scikit-learn": "1.9.0",
+      "numpy": "2.4.6"
+    },
+    "array_keys": [
+      "Ete",
+      "Tte",
+      "betas",
+      "cox_risk",
+      "cox_surface",
+      "ds_risk",
+      "ds_surface",
+      "pvalues",
+      "train_curve",
+      "val_curve"
+    ]
+  }
+}

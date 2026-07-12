@@ -1,0 +1,14 @@
+{
+  "stdout": "building the whole plan took 1925 ms\n...and read exactly ZERO rows.\n\nthe action took 4.40 s\nbatting_team  boundaries\n       India        5806\n     England        5442\n New Zealand        5003\n   Australia        4870\nSouth Africa        4691\n",
+  "code_hash": "4bcc62a44c11e550",
+  "_meta": {
+    "computed_at": "2026-07-12 10:45",
+    "seed": 0,
+    "versions": {
+      "torch": "2.13.0+cpu",
+      "scikit-learn": "1.9.0",
+      "numpy": "2.4.6"
+    },
+    "array_keys": []
+  }
+}

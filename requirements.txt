@@ -1,0 +1,21 @@
+# Core app
+streamlit>=1.49
+streamlit-ace>=0.1.1
+
+# Data & plotting
+numpy>=2.0
+pandas>=2.2,<3        # pycox's dependency chain requires pandas < 3
+matplotlib>=3.9
+plotly>=5.24
+
+# Machine learning
+scikit-learn>=1.5
+
+# Big data (ALSO REQUIRES JAVA - see the README before installing)
+pyspark>=4.0
+
+# Deep learning & survival analysis (Sections 5-7)
+torch>=2.4
+torchtuples>=0.2.2
+pycox>=0.3.0
+lifelines>=0.29

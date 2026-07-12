@@ -1,0 +1,14 @@
+{
+  "stdout": "linear    : Cox 0.776 | DeepSurv 0.757 | beta_0=+0.570 beta_1=+1.300\nnonlinear : Cox 0.497 | DeepSurv 0.576 | beta_0=-0.059 beta_1=-0.014\n",
+  "code_hash": "c7e135f646736119",
+  "_meta": {
+    "computed_at": "2026-07-12 09:17",
+    "seed": 0,
+    "versions": {
+      "torch": "2.13.0+cpu",
+      "scikit-learn": "1.9.0",
+      "numpy": "2.4.6"
+    },
+    "array_keys": []
+  }
+}

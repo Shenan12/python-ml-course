@@ -1,0 +1,14 @@
+{
+  "stdout": "+-------+-----+-------+\n|region |runs |matches|\n+-------+-----+-------+\n|Asia   |57739|226    |\n|Oceania|38308|159    |\n|Europe |18887|75     |\n|Africa |18227|73     |\n+-------+-----+-------+\n\n",
+  "code_hash": "a98e78419f090724",
+  "_meta": {
+    "computed_at": "2026-07-12 10:46",
+    "seed": 0,
+    "versions": {
+      "torch": "2.13.0+cpu",
+      "scikit-learn": "1.9.0",
+      "numpy": "2.4.6"
+    },
+    "array_keys": []
+  }
+}

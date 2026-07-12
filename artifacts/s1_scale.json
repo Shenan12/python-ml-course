@@ -1,0 +1,24 @@
+{
+  "n_rows": 1351138,
+  "disk_mb": 3.667849,
+  "pandas_mem_mb": 490.287642,
+  "blowup": 133.67170840457172,
+  "t_pandas_load": 0.45594263076782227,
+  "t_pandas_agg": 0.06121945381164551,
+  "t_spark_load": 5.2780210971832275,
+  "t_spark_agg": 3.0547287464141846,
+  "n_partitions": 1,
+  "n_cores": 22,
+  "pandas_result_csv": "batting_team,runs_off_bat\r\nIndia,120069\r\nAustralia,109649\r\nSri Lanka,102336\r\nEngland,99186\r\nPakistan,92869\r\nSouth Africa,89322\r\nNew Zealand,84492\r\nWest Indies,78534\r\n",
+  "spark_result_csv": "batting_team,runs\r\nIndia,120069\r\nAustralia,109649\r\nSri Lanka,102336\r\nEngland,99186\r\nPakistan,92869\r\nSouth Africa,89322\r\nNew Zealand,84492\r\nWest Indies,78534\r\n",
+  "_meta": {
+    "computed_at": "2026-07-12 10:30",
+    "seed": 0,
+    "versions": {
+      "torch": "2.13.0+cpu",
+      "scikit-learn": "1.9.0",
+      "numpy": "2.4.6"
+    },
+    "array_keys": []
+  }
+}

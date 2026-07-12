@@ -1,0 +1,14 @@
+{
+  "stdout": "one row = one batter's innings\n           batter  balls_faced  runs  event  batting_position  career_avg  wickets_at_entry\n         SE Marsh           34    20      1                 2   35.200000                 0\n       RT Ponting           61    49      1                 3   25.000000                 1\n         CL White           35    22      1                 5   49.000000                 3\n       MEK Hussey           25    28      1                 6   73.333333                 4\n        BJ Haddin           14     8      1                 7   37.000000                 5\n      Tamim Iqbal            6     1      1                 1   40.000000                 0\n      Imrul Kayes           13     9      1                 2   35.400000                 0\nMohammad Ashraful           18     1      1                 3   25.200000                 1\n\nevent = 1 -> dismissed;  event = 0 -> NOT OUT (censored)\n  dismissed: 21,439\n  not out  : 4,064 (15.9% of innings)\n\ntrain 15,344 innings (2010-2019)\nval   3,653 innings (2020-2022)\ntest  6,506 innings (2023-2026)\n\n20 features:\n  ['career_avg', 'career_sr', 'career_balls_per_dismissal', 'career_innings', 'batting_position', 'entry_over', 'runs_at_entry', 'wickets_at_entry', 'run_rate_at_entry', 'is_chasing', 'vs_Australia', 'vs_Bangladesh', 'vs_England', 'vs_India', 'vs_New Zealand', 'vs_Other', 'vs_Pakistan', 'vs_South Africa', 'vs_Sri Lanka', 'vs_West Indies']\n",
+  "code_hash": "c325c3ce1b0f5f8a",
+  "_meta": {
+    "computed_at": "2026-07-12 09:58",
+    "seed": 0,
+    "versions": {
+      "torch": "2.13.0+cpu",
+      "scikit-learn": "1.9.0",
+      "numpy": "2.4.6"
+    },
+    "array_keys": []
+  }
+}

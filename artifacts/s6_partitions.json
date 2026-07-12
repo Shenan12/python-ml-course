@@ -1,0 +1,19 @@
+{
+  "default_partitions": 1,
+  "partition_counts_csv": "pid,count\r\n0,1351138\r\n",
+  "timings_csv": "partitions,seconds\r\n1,1.0462620258331299\r\n2,1.3325257301330566\r\n4,0.9916262626647949\r\n8,0.9968852996826172\r\n16,1.1220107078552246\r\n",
+  "t_narrow": 0.18787145614624023,
+  "t_wide": 0.5287363529205322,
+  "narrow_plan": "== Physical Plan ==\n*(1) Filter (isnotnull(runs_off_bat#301) AND (runs_off_bat#301 >= 4))\n+- *(1) ColumnarToRow\n   +- FileScan parquet [match_id#291L,year#292,venue#293,innings#294,over#295,ball#296,batting_team#297,bowling_team#298,striker#299,bowler#300,runs_off_bat#301,extras#302,is_wide#303,is_wicket#304,wicket_type#305] Batched: true, DataFilters: [isnotnull(runs_off_bat#301), (runs_off_bat#301 >= 4)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/D:/python-ml-course/data/odi_deliveries.parquet], PartitionFilters: [], PushedFilters: [IsNotNull(runs_off_bat), GreaterThanOrEqual(runs_off_bat,4)], ReadSchema: struct<match_id:bigint,year:int,venue:string,innings:tinyint,over:smallint,ball:double,batting_te...\n\n\n",
+  "wide_plan": "== Physical Plan ==\n*(2) HashAggregate(keys=[striker#299], functions=[sum(runs_off_bat#301)])\n+- Exchange hashpartitioning(striker#299, 8), ENSURE_REQUIREMENTS, [plan_id=1143]\n   +- *(1) HashAggregate(keys=[striker#299], functions=[partial_sum(runs_off_bat#301)])\n      +- *(1) ColumnarToRow\n         +- FileScan parquet [striker#299,runs_off_bat#301] Batched: true, DataFilters: [], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/D:/python-ml-course/data/odi_deliveries.parquet], PartitionFilters: [], PushedFilters: [], ReadSchema: struct<striker:string,runs_off_bat:smallint>\n\n\n",
+  "_meta": {
+    "computed_at": "2026-07-12 10:31",
+    "seed": 0,
+    "versions": {
+      "torch": "2.13.0+cpu",
+      "scikit-learn": "1.9.0",
+      "numpy": "2.4.6"
+    },
+    "array_keys": []
+  }
+}

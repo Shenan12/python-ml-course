@@ -1,0 +1,27 @@
+{
+  "tests_csv": "covariate,test_statistic,p\r\nbatting_position,25.311380380600337,4.878220735498839e-07\r\ncareer_avg,10.02721378830179,0.0015424417861171732\r\ncareer_sr,0.0018623116586315251,0.9655783677319312\r\nis_chasing,0.2158576417640836,0.6422144776218447\r\nwickets_at_entry,22.80041089497741,1.7972727571558402e-06\r\n",
+  "hr_csv": "window,hazard_ratio_opener,p\r\nballs 1-10,0.7316838228579271,5.929118790432737e-23\r\nballs 11-25,0.8589647143382653,4.141367351012748e-07\r\nballs 26-50,0.8970951039607753,0.0006051677637780048\r\nballs 51-100,0.7929869236272975,4.250777090316976e-11\r\n",
+  "cox_cindex": 0.6020344833859885,
+  "n": 25503,
+  "n_events": 21439,
+  "censor_rate": 0.1593538015135474,
+  "_meta": {
+    "computed_at": "2026-07-12 09:41",
+    "seed": 0,
+    "versions": {
+      "torch": "2.13.0+cpu",
+      "scikit-learn": "1.9.0",
+      "numpy": "2.4.6"
+    },
+    "array_keys": [
+      "balls",
+      "hazard",
+      "km_lower order (6+)_s",
+      "km_lower order (6+)_t",
+      "km_middle order (3-5)_s",
+      "km_middle order (3-5)_t",
+      "km_openers (1-2)_s",
+      "km_openers (1-2)_t"
+    ]
+  }
+}

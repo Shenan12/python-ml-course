@@ -1,0 +1,14 @@
+{
+  "stdout": "epoch   0: loss 5.5180  lr 0.01000\nepoch 100: loss 5.3678  lr 0.00909\nepoch 200: loss 5.2577  lr 0.00833\ntest C-index: 0.5765\n",
+  "code_hash": "6c98557671f35246",
+  "_meta": {
+    "computed_at": "2026-07-12 09:17",
+    "seed": 0,
+    "versions": {
+      "torch": "2.13.0+cpu",
+      "scikit-learn": "1.9.0",
+      "numpy": "2.4.6"
+    },
+    "array_keys": []
+  }
+}

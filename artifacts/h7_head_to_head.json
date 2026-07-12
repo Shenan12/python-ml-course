@@ -1,0 +1,25 @@
+{
+  "c_cox": 0.5997975102306203,
+  "c_ds": 0.6017334940453607,
+  "c_dh": 0.6043165475580321,
+  "ibs_ds": 0.10315350638175748,
+  "ibs_dh": 0.10449250393931783,
+  "n_test": 6506,
+  "_meta": {
+    "computed_at": "2026-07-12 09:50",
+    "seed": 0,
+    "versions": {
+      "torch": "2.13.0+cpu",
+      "scikit-learn": "1.9.0",
+      "numpy": "2.4.6"
+    },
+    "array_keys": [
+      "dh_index",
+      "dh_mean",
+      "ds_index",
+      "ds_mean",
+      "km_s",
+      "km_t"
+    ]
+  }
+}

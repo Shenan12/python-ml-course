@@ -1,0 +1,21 @@
+{
+  "c_time_split": 0.6017334940453607,
+  "c_random_split": 0.6081209615708663,
+  "n_train": 15344,
+  "n_val": 3653,
+  "n_test": 6506,
+  "train_years": "2010\u20132019",
+  "test_years": "2023\u20132026",
+  "n_features": 20,
+  "features_csv": "feature\r\ncareer_avg\r\ncareer_sr\r\ncareer_balls_per_dismissal\r\ncareer_innings\r\nbatting_position\r\nentry_over\r\nruns_at_entry\r\nwickets_at_entry\r\nrun_rate_at_entry\r\nis_chasing\r\nvs_Australia\r\nvs_Bangladesh\r\nvs_England\r\nvs_India\r\nvs_New Zealand\r\nvs_Other\r\nvs_Pakistan\r\nvs_South Africa\r\nvs_Sri Lanka\r\nvs_West Indies\r\n",
+  "_meta": {
+    "computed_at": "2026-07-12 09:41",
+    "seed": 0,
+    "versions": {
+      "torch": "2.13.0+cpu",
+      "scikit-learn": "1.9.0",
+      "numpy": "2.4.6"
+    },
+    "array_keys": []
+  }
+}

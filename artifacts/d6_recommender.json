@@ -1,0 +1,27 @@
+{
+  "gamma": -0.6722760043026695,
+  "median_agree": 1.3775486507070527,
+  "median_disagree": 0.438834709193669,
+  "n_agree": 482,
+  "n_disagree": 518,
+  "_meta": {
+    "computed_at": "2026-07-12 09:17",
+    "seed": 0,
+    "versions": {
+      "torch": "2.13.0+cpu",
+      "scikit-learn": "1.9.0",
+      "numpy": "2.4.6"
+    },
+    "array_keys": [
+      "E",
+      "T",
+      "X",
+      "agreed",
+      "rec_actual",
+      "rec_surface",
+      "sample_recs",
+      "sample_rows",
+      "trt"
+    ]
+  }
+}

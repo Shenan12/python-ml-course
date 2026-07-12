@@ -1,0 +1,14 @@
+{
+  "timings_csv": "task,pandas_s,spark_s\r\nfilter + count,0.15898466110229492,0.3067965507507324\r\ngroupBy + sum,0.16849136352539062,0.8543081283569336\r\ncount distinct bowlers,0.11440753936767578,0.7920165061950684\r\n",
+  "n_rows": 1351138,
+  "_meta": {
+    "computed_at": "2026-07-12 10:33",
+    "seed": 0,
+    "versions": {
+      "torch": "2.13.0+cpu",
+      "scikit-learn": "1.9.0",
+      "numpy": "2.4.6"
+    },
+    "array_keys": []
+  }
+}
