@@ -149,10 +149,12 @@ Read the heatmap's *structure*, not just its winner:
   exactly why we search combinations rather than one knob at a time.
 
 This humble double-loop is a real technique with a real name — **grid
-search** — and it is precisely what the DeepSurv paper describes in its
-appendix (they use grid search, plus a smarter cousin called random search,
-over layers, learning rate, dropout and more). When you rebuild their tuning
-loop in Section 6, it will be *this code with a different model inside*.
+search**. The DeepSurv paper's appendix does the same job one step smarter:
+a **random search** (sampling combinations rather than visiting every grid
+cell) over layers, learning rate, dropout and more — you'll see on the
+Section 6 results page *why* random beats grid when there are many knobs.
+When you rebuild their tuning loop there, it will be *this code with a
+different model inside and the grid swapped for random draws*.
 
 One last honesty rule, tying the whole section together: after the search
 picks its winner, the winning validation score is *flattering* (you chose it

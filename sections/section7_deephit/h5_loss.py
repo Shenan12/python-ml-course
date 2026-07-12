@@ -25,6 +25,15 @@ $$\mathcal{L} = \underbrace{\alpha \cdot \mathcal{L}_1}_{\text{be right}} \;+\; 
 $\alpha$ is the dial between them. This is unusual and worth pausing on: **most
 losses optimise likelihood alone and hope ranking follows.** DeepHit optimises
 the evaluation metric (concordance) *directly*, as part of its objective.
+
+**A sourcing note before you read the paper** (Lee et al., AAAI 2018): the
+paper writes the objective as $\mathcal{L}_{\text{Total}} = \mathcal{L}_1 + \mathcal{L}_2$,
+with coefficients $\alpha_k$ *inside* $\mathcal{L}_2$ trading off the ranking
+losses of the $K$ competing causes. The convex
+$\alpha \mathcal{L}_1 + (1{-}\alpha)\mathcal{L}_2$ form used on this page is
+**pycox's reparametrisation** — the same two ingredients, repackaged as one
+dial, and it's the $\alpha$ you actually tune in code. Same model, different
+bookkeeping; don't let the notation mismatch throw you in a viva.
 """
 )
 

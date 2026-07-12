@@ -50,7 +50,7 @@ justifies the entire field:
 
 | Shortcut | What breaks |
 |---|---|
-| **Drop the censored rows** | You throw away the machines that lasted *longest*. Your remaining sample is biased toward early failures, so every lifetime estimate comes out too short. In the paper's SUPPORT dataset that would mean discarding **68%** of the data. |
+| **Drop the censored rows** | You throw away the machines that lasted *longest*. Your remaining sample is biased toward early failures, so every lifetime estimate comes out too short. In the paper's WHAS dataset that would mean discarding **58%** of the data (only 42.12% of its patients have an observed event). |
 | **Treat T as the true lifetime and run linear regression** | You'd be telling the model "M2 failed at month 12" when M2 *didn't fail at all*. You are training on labels you know to be false. |
 | **Turn it into classification: "failed within 12 months, yes/no"** | You bin away the timing (a failure at month 1 and month 11 become the same label), and you still can't classify M4, which left at month 5 — was it going to fail by month 12 or not? Unknowable. |
 
@@ -324,9 +324,10 @@ Three consequences worth carrying around:
 1. **AUC is the special case** where "time" is binary (event/no event) — the
    same statistic, so your intuition for AUC (0.5 = coin flip, threshold-free,
    only ranks matter) transfers wholesale.
-2. It's a linear transform of **Kendall's τ** between predicted risk and
-   failure time ($C \approx (\tau + 1)/2$) — the C-index is rank correlation
-   wearing a survival costume.
+2. It's a linear transform of **Somers' D** (the asymmetric cousin of
+   Kendall's τ): $C = (D + 1)/2$ exactly — and with continuous, tie-free
+   data $D$ coincides with Kendall's τ. Either way: the C-index is rank
+   correlation wearing a survival costume.
 3. **Censoring makes the pair set data-dependent**: Harrell's C averages over
    *comparable* pairs only, and which pairs are comparable depends on the
    censoring distribution. So two studies of the same model with different

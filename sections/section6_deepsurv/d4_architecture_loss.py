@@ -50,10 +50,16 @@ st.markdown(
     """
 Per Katzman et al., DeepSurv is a multi-layer perceptron with a **single
 output node** estimating $\\hat h_\\theta(x)$, using **SELU or ReLU**
-activations (with **batch normalization** in the ReLU variants), **dropout**,
+activations (chosen per dataset by the hyperparameter search), **dropout**,
 and **weight decay** (L2). Depth and width are hyperparameters, searched per
-dataset: across their experiments the paper uses roughly **1–3 hidden
-layers** with about **4–48 nodes** per layer, dropout in the range **~0.1–0.7**.
+dataset: across the paper's experiments (its Table 3) the networks use
+**1–3 hidden layers** with **4–48 nodes** per layer and dropout in the range
+**0.11–0.66**.
+
+*(One honest flag: the demo below offers a "ReLU + BatchNorm" variant because
+batch normalization is standard modern practice with ReLU — but **batch
+normalization is not mentioned in the DeepSurv paper**. Treat it as our
+addition, not the paper's.)*
 
 Note the *smallness*. These are not large networks — a few thousand
 parameters at most. That is a deliberate response to the datasets being small

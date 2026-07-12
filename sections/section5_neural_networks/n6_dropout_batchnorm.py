@@ -11,8 +11,10 @@ st.markdown(
     """
 Big networks overfit — the U-curve from Section 2 does not spare them. This
 page covers the two techniques that appear in nearly every modern
-architecture (and both appear in the DeepSurv paper's hyperparameter search,
-so this is direct dissertation groundwork).
+architecture (dropout is one of the DeepSurv paper's searched
+hyperparameters, so that half is direct dissertation groundwork; batch
+normalization is standard modern practice, though the DeepSurv paper itself
+doesn't use it).
 
 - **Dropout** — during *training only*, randomly switch off a fraction of
   neurons on every single forward pass. It sounds like sabotage. It's the

@@ -183,7 +183,9 @@ number — the spread tells your reader how much the estimate wobbles. This is
 the honest way to compare two models: if their CV score ranges overlap
 heavily, any difference may be noise. With small medical datasets (exactly
 your dissertation's situation) cross-validation isn't a nicety, it's
-essential — and it's why the DeepSurv paper reports cross-validated results.
+essential — the DeepSurv paper uses 3-fold cross-validation inside its
+hyperparameter search, and reports bootstrapped confidence intervals on
+every C-index for exactly this wobble-quantifying reason.
 """
 )
 
@@ -283,9 +285,12 @@ Three things worth knowing as a statistician:
 - **This is exactly how you'll compare survival models.** `lifelines`
   reports `AIC_` on a fitted `CoxPHFitter`, and you can compare a Cox model
   against a richer one by AIC — a direct bridge from this page to your
-  dissertation. (DeepSurv itself is compared by C-index, not AIC, because
-  its likelihood isn't a standard closed form — but AIC will be in your
-  toolkit for the classical Cox baselines.)
+  dissertation. (DeepSurv itself is compared by C-index, not AIC: with
+  dropout, weight decay and early stopping all shrinking a network's
+  *effective* number of parameters below its raw weight count, there is no
+  honest `k` to charge the `2k` toll on — so information criteria give way
+  to held-out evaluation. AIC stays in your toolkit for the classical Cox
+  baselines.)
 """
 )
 

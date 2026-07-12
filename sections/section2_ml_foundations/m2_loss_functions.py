@@ -115,6 +115,16 @@ Two things to notice, both of which matter enormously later:
   slope*, which is why MSE-like losses are beloved.
 - **The MAE curve is made of straight segments with kinks.** At a kink the
   "downhill direction" is ambiguous — optimisable, but less conveniently.
+
+And one connection for the statistician in you, which explains *everything*
+in the outlier demo below before you even run it: if you had to summarise a
+dataset with a single constant, the constant that minimises **MSE is the
+mean**, and the one that minimises **MAE is the median**. So an MSE-fitted
+model is a conditional *mean* and chases outliers exactly as means do, while
+an MAE-fitted model is a conditional *median* and shrugs them off exactly as
+medians do. (Deeper still: minimising MSE is maximum likelihood under
+Gaussian noise; MAE under Laplace noise. Your loss function is a noise model
+in disguise.)
 """
 )
 

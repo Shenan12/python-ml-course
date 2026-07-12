@@ -146,6 +146,13 @@ and every time, sum to 1. Architecturally that means:
 - one **sub-network per cause** (each cause has its own patterns), then
 - a **joint softmax** over the whole grid.
 
+One faithful-to-the-paper detail our simplified diagram omits: each
+cause-specific sub-network receives **both** the trunk's output *and the raw
+covariates $x$ again* (a residual connection). The paper's reasoning: if the
+sub-networks only saw the shared representation, any cause-specific pattern
+the trunk didn't capture would be lost forever — the skip connection keeps
+the raw signal available.
+
 The output is the **cause-specific CIF**: $F_c(t \mid x)$ = *"the probability
 this batter is out **by** ball $t$, **bowled**"*. The ranking term is then
 applied **within each cause** separately.

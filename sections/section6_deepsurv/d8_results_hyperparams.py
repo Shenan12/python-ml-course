@@ -12,10 +12,11 @@ st.title("📊 The Paper's Results & Hyperparameter Search")
 st.header("1 · What DeepSurv achieved on real data")
 st.markdown(
     """
-The paper evaluates on three real clinical datasets. **These are genuinely
-medical** — that's what the authors used, and reporting them faithfully is
-part of reading the paper honestly (our own simulations stay on equipment, as
-you asked).
+The paper evaluates on three real clinical datasets (plus a fourth pair,
+Rotterdam & GBSG, used to validate the treatment recommender). **These are
+genuinely medical** — that's what the authors used, and reporting them
+faithfully is part of reading the paper honestly (our own simulations stay on
+equipment, as you asked).
 
 - **WHAS** — Worcester Heart Attack Study: survival after a heart attack.
 - **SUPPORT** — Study to Understand Prognoses Preferences Outcomes and Risks
@@ -34,10 +35,10 @@ results = pd.DataFrame({
     "dataset": ["Simulated linear", "Simulated nonlinear", "WHAS", "SUPPORT",
                 "METABRIC"],
     "n": ["6,000", "6,000", "1,638", "9,105", "1,980"],
-    "censoring": ["50%", "50%", "42.1%", "68.1%", "—"],
-    "CPH (linear Cox)": [0.779, 0.487, 0.8176, 0.5829, 0.6306],
-    "DeepSurv": [0.778, 0.652, 0.8626, 0.6183, 0.6434],
-    "RSF": [0.758, 0.627, 0.8936, 0.6130, 0.6243],
+    "events observed": ["50%", "50%", "42.1%", "68.1%", "57.7%"],
+    "CPH (linear Cox)": [0.7792, 0.4867, 0.8160, 0.5831, 0.6317],
+    "DeepSurv": [0.7781, 0.6524, 0.8667, 0.6189, 0.6545],
+    "RSF": [0.7579, 0.6266, 0.8929, 0.6193, 0.6195],
 })
 st.dataframe(
     results.style.format({"CPH (linear Cox)": "{:.4f}", "DeepSurv": "{:.4f}",
@@ -72,33 +73,39 @@ st.markdown(
 **How to read this table like a statistician, not a cheerleader:**
 
 - **DeepSurv beats CPH on all three real datasets**, but look at the *sizes*
-  of the wins: WHAS +0.045, SUPPORT +0.035, METABRIC +0.013. These are real
+  of the wins: WHAS +0.051, SUPPORT +0.036, METABRIC +0.023. These are real
   and consistent, but they are **modest**. The nonlinearity in real clinical
   data is evidently mild compared to the paper's deliberately brutal gaussian
-  simulation (+0.165).
-- **RSF beats DeepSurv on WHAS** (0.8936 vs 0.8626) — and comfortably. The
+  simulation (+0.166).
+- **RSF beats DeepSurv on WHAS** (0.8929 vs 0.8667) — and comfortably. The
   paper does not hide this, and neither should you. There is **no free
   lunch**: a flexible tree ensemble can be the better model on a given
-  dataset. DeepSurv wins on SUPPORT and METABRIC; RSF wins on WHAS.
-- **SUPPORT's C-indices are low across the board** (0.58–0.62). With 68%
-  censoring and genuinely hard-to-predict outcomes, *every* model struggles.
-  A C-index near 0.6 isn't a broken model — it can be the honest ceiling of
-  the data. Always ask what's achievable before judging a number.
-- **METABRIC's margin (0.6306 → 0.6434) is small.** Would it survive a
-  different random split? The paper reports confidence intervals for exactly
-  this reason. When you report your own results, report the spread too — the
+  dataset. DeepSurv clearly wins METABRIC; **SUPPORT is a dead heat**
+  (0.6189 vs RSF's 0.6193, with overlapping confidence intervals); RSF wins
+  WHAS.
+- **SUPPORT's C-indices are low across the board** (0.58–0.62), even though
+  it is by far the *largest* dataset. Seriously-ill hospitalised patients'
+  outcomes are genuinely hard to order — a C-index near 0.6 isn't a broken
+  model; it can be the honest ceiling of the data. Always ask what's
+  achievable before judging a number.
+- **METABRIC's margin (0.6317 → 0.6545) is the cleanest real-data win.** The
+  paper reports bootstrapped confidence intervals — (0.627–0.636) vs
+  (0.650–0.659) — which **don't overlap**, so this gap is real, if modest.
+  That is why you report the spread and not just the point estimate — the
   cross-validation lesson from Section 3.
 """
 )
 st.info(
-    "**Verification note.** The C-index values, dataset sizes and censoring "
-    "rates above are taken from the published paper (Katzman et al. 2018, "
-    "BMC Medical Research Methodology). The censoring rate for METABRIC is "
-    "left blank because I could not confirm it to my own satisfaction from "
-    "the sources I checked — rather than print a number I'm unsure of, I've "
-    "left the cell empty. Check the paper's dataset table directly before "
-    "quoting it in your dissertation, and do the same for any figure here "
-    "that you plan to cite."
+    "**Verification note.** The C-index values above are the published BMC "
+    "version's Table 1 (Katzman et al. 2018, BMC Medical Research "
+    "Methodology), re-checked against the full text (values rounded to 4 "
+    "decimals); the *events observed* column is the paper's dataset table "
+    "(so the *censoring* rates are the complements: WHAS ≈ 58%, SUPPORT "
+    "≈ 32%, METABRIC ≈ 42%). Beware: the earlier **arXiv preprint reports "
+    "different numbers** for the real datasets (e.g. METABRIC DeepSurv "
+    "0.6434 vs the published 0.6545) — if numbers you find elsewhere "
+    "disagree, check which version they came from, and cite the published "
+    "one in your dissertation."
 )
 
 st.header("2 · The hyperparameter search, rebuilt and running")
@@ -110,15 +117,15 @@ quasi-random sampling), selecting the configuration that maximises validation
 C-index under **3-fold cross-validation**. The searched hyperparameters and
 the approximate ranges reported across its experiments:
 
-| hyperparameter | range in the paper |
+| hyperparameter | range across the paper's Table 3 |
 |---|---|
 | hidden layers (depth) | 1 – 3 |
 | nodes per layer | 4 – 48 |
-| learning rate | 0.0001 – 0.15 |
-| L2 (weight decay) | 1.9 – 16.1 |
-| dropout | 0.11 – 0.67 |
-| learning-rate decay | 0.0001 – 0.005 |
-| momentum | 0.84 – 0.91 |
+| learning rate | 0.0003 – 0.154 |
+| L2 (weight decay) | 2.0 – 16.1 |
+| dropout | 0.11 – 0.66 |
+| learning-rate decay | 0.0003 – 0.006 |
+| momentum | 0.84 – 0.94 |
 
 **Why random search, not grid search?** This is a genuinely important
 methodological point, and a good viva question. With a grid, if you try 4

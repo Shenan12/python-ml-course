@@ -14,21 +14,30 @@ The previous page argued that DeepSurv's contribution is *how it's trained*.
 This page takes each technique the paper names, explains what it does, and
 **demonstrates it working on our machine data**.
 
-From Katzman et al. (2018), the training recipe is:
+The paper names its techniques in one sentence — *"standardizing the input,
+Scaled Exponential Linear Units (SELU) as the activation function, Adaptive
+Moment Estimation (Adam) for the gradient descent algorithm, Nesterov
+momentum, and learning rate scheduling"* — with the searched values in its
+hyperparameter table (Table 3):
 
-| Technique | What the paper specifies |
+| Technique | What the paper reports |
 |---|---|
 | **Standardized inputs** | covariates normalized before training |
-| **Activations** | SELU, or ReLU with batch normalization |
-| **Dropout** | tuned per dataset (roughly 0.1–0.7 across their experiments) |
-| **Optimiser** | SGD or **Adam**, with **Nesterov momentum** (≈0.84–0.91 in their reported settings) |
-| **Learning-rate decay** | inverse-time decay: lr_t = lr₀ / (1 + t · decay) |
-| **Gradient clipping** | used to prevent exploding updates |
-| **L2 / weight decay** | the λ‖θ‖² term in the loss |
+| **Activations** | SELU or ReLU (the search picked SELU for 5 of 7 experiments) |
+| **Dropout** | tuned per dataset: 0.11–0.66 across the experiments |
+| **Optimiser** | SGD (both simulations) or **Adam** (all real datasets), with **Nesterov momentum** (0.84–0.94) |
+| **Learning-rate decay** | inverse-time decay: lr_t = lr₀ / (1 + t · decay), rates 0.0003–0.006 |
+| **L2 / weight decay** | the λ‖θ‖² term — searched values 2.0–16.1 |
 
-Note the L2 coefficients the paper reports are *large* by deep-learning
-standards (their search ranged into the double digits) — a sign of how hard
-these small, censored datasets push back against a flexible model.
+Note the L2 coefficients are *large* by deep-learning standards (into the
+double digits) — a sign of how hard these small, censored datasets push back
+against a flexible model.
+
+*(This page also covers **gradient clipping** below. Honesty note: clipping
+is **not** named in the DeepSurv paper — it's standard craft for any loss
+with an exponential inside, and you'll meet it constantly in practice, so we
+teach it here rather than pretend the topic doesn't exist. It is our
+addition, clearly flagged.)*
 """
 )
 
@@ -167,7 +176,7 @@ if decay == 0.0:
             "switched off. Perfectly valid (Adam already adapts step sizes), "
             "and it's what most of our earlier pages did.")
 st.caption(
-    "The paper reports decay rates in roughly the 0.0001–0.005 range across "
+    "The paper's Table 3 reports decay rates between 0.0003 and 0.006 across "
     "its experiments — note how gentle that is: even at 0.005, after 500 "
     "epochs the rate has only fallen to about a third of its initial value."
 )
@@ -294,10 +303,13 @@ problem small enough to afford it.
 """
     )
 
-st.header("4 · Gradient clipping")
+st.header("4 · Gradient clipping (our addition — not in the paper)")
 st.markdown(
     r"""
-The last safety net. Occasionally a batch produces an enormous gradient (a
+The last safety net — and, as flagged at the top of the page, the one
+technique here that Katzman et al. do **not** name. We include it because it
+belongs to the same family of protections and you will see it in nearly every
+real training script. Occasionally a batch produces an enormous gradient (a
 near-tie in the risk set, an extreme covariate), and a single huge step throws
 the network into a bad region it never recovers from — training "explodes",
 and with an exponential inside your loss this is a real risk.
@@ -324,8 +336,8 @@ show_example(
 - `nn.SELU()` + `nn.AlphaDropout(0.1)` — the SELU variant the paper mentions. SELU is *self-normalising*: it keeps activations near zero-mean/unit-variance automatically, so it needs no BatchNorm. Its partner is `AlphaDropout`, which is dropout that preserves that self-normalising property (ordinary `Dropout` would break it). Use them as a pair — this is a detail people get wrong.
 - `weight_decay=1e-4` — the λ‖θ‖² term, applied by the optimiser.
 - The `for g in opt.param_groups: g["lr"] = ...` loop — inverse-time decay, implemented exactly as the paper's formula. (PyTorch also has `torch.optim.lr_scheduler.LambdaLR` to do this more tidily.)
-- `clip_grad_norm_(net.parameters(), 1.0)` — **placed after `backward()` and before `step()`**, which is the only correct spot: the gradients must exist, and must be capped before they're applied. The trailing underscore means it modifies the gradients in place.
-- Each numbered comment is one row of the paper's table — the whole recipe in 25 lines.
+- `clip_grad_norm_(net.parameters(), 1.0)` — **placed after `backward()` and before `step()`**, which is the only correct spot: the gradients must exist, and must be capped before they're applied. The trailing underscore means it modifies the gradients in place. (Clipping is our addition — the paper doesn't name it.)
+- Each numbered comment is one of the techniques from the table above — the whole recipe in 25 lines.
 """,
     key="d5_example",
     heavy=True,
