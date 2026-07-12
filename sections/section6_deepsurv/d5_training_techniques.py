@@ -258,6 +258,42 @@ st.markdown(
     "section."
 )
 
+with st.expander("🎓 Deeper statistics — you have used a better optimiser "
+                 "than any of these, in every stats course"):
+    st.markdown(
+        r"""
+When R fits a logistic regression or a Cox model, it doesn't use gradient
+descent at all — it uses **Newton–Raphson / Fisher scoring**:
+
+$$\theta_{t+1} = \theta_t + \mathcal{I}(\theta_t)^{-1}\, s(\theta_t)$$
+
+step = *inverse information matrix* times the score. Multiplying by
+$\mathcal{I}^{-1}$ rescales every direction by its curvature — it turns the
+stretched ravine into a perfect bowl and typically converges in under ten
+iterations, with the bonus that $\mathcal{I}(\hat\theta)^{-1}$ *is* the
+coefficient covariance matrix (your standard errors) at the end.
+
+So why doesn't deep learning use it? **Dimension.** With $p$ parameters the
+information matrix is $p \times p$: for a Cox model with 10 covariates
+that's a 10×10 solve (trivial); for even our small DeepSurv nets it's
+~3,000×3,000, recomputed every step, and for real networks it's billions
+squared — impossible. The whole modern-optimiser zoo is best read as
+**cheap approximations to the Newton step**:
+
+| optimiser | what it approximates |
+|---|---|
+| plain SGD | $\mathcal{I}^{-1} \approx$ (a constant) — no curvature at all |
+| momentum / Nesterov | averages out the ravine's oscillation *as if* curvature were flattened |
+| **Adam** | $\mathcal{I}^{-1} \approx$ a **diagonal** matrix estimated from running gradient magnitudes — per-parameter curvature, ignoring all cross-terms |
+
+That reading also demystifies two facts from this page: Adam substituting
+for standardization (a diagonal rescale is exactly what standardizing does
+to the first layer), and lifelines agreeing with our gradient ascent on d2
+while using far fewer iterations — it's running the real Newton step on a
+problem small enough to afford it.
+"""
+    )
+
 st.header("4 · Gradient clipping")
 st.markdown(
     r"""

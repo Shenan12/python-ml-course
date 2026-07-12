@@ -161,6 +161,54 @@ worse.
 """
 )
 
+with st.expander("🎓 Deeper statistics — what C-td and IBS actually compute "
+                 "(the two metrics this page hangs on)"):
+    st.markdown(
+        r"""
+**C-td — Antolini's time-dependent concordance.** Harrell's C-index needs
+each subject reduced to *one* risk score, which is fine for Cox/DeepSurv
+(the score never changes rank over time) but ill-posed for DeepHit — with
+crossing curves, *who is riskier* depends on *when you ask*. Antolini's
+fix: compare the pair **at the earlier failure's own time**. A comparable
+pair $(i, j)$ with $T_i < T_j$ is concordant if
+
+$$F_i(T_i \mid x_i) > F_j(T_i \mid x_j)$$
+
+— at the moment $i$ was dismissed, the model gave $i$ the higher
+probability of being out by then. For a PH model, $F_i(t) > F_j(t)$ at one
+$t$ implies it at every $t$, so **C-td collapses back to Harrell's C** —
+which is why comparing DeepSurv's C (from a score) with DeepHit's C-td
+(from curves) on the scoreboard above is a fair fight and not a units
+mismatch.
+
+**IBS — the Brier score, censoring-corrected.** The Brier score at horizon
+$t$ is a squared error on the survival *probability*:
+$\mathbb{E}\big[(\mathbb{1}\{T > t\} - \hat S(t \mid x))^2\big]$ — a
+**proper scoring rule**, minimised only by the true probability, which is
+what earns it the word "calibration". Censoring breaks the naive average
+(a not-out batter with $Y < t$ contributes an unknowable label), and the
+standard repair (Graf et al. 1999) is **inverse-probability-of-censoring
+weighting**: estimate the *censoring* survival curve $\hat G$ (a KM fit
+with the roles of event and censoring swapped), then weight each usable
+innings by $1/\hat G$ — dismissed-before-$t$ innings by
+$1/\hat G(T_i)$, survivors by $1/\hat G(t)$. Each observed batter stands
+in for the censored ones just like him — the same reweighting logic as
+Horvitz–Thompson estimation in sampling theory. Integrating over $t$
+gives the IBS. Two practical corollaries: IPCW needs its *own*
+non-informative-censoring assumption (now about $C$), and $\hat G$ is
+estimated on the test data — so IBS values are only comparable within the
+same test set, never across datasets.
+
+**And a bootstrap habit for the "third decimal" claim.** The statement
+"these gaps are inside the noise" can be checked, not just asserted:
+resample the test innings with replacement, recompute both metrics a few
+hundred times, and look at the spread of the *difference*. If the
+percentile interval covers zero comfortably, you can report the tie with
+confidence instead of a hunch — a worthwhile check to run for any
+head-to-head table in your dissertation.
+"""
+    )
+
 st.header("4 · So when SHOULD you reach for DeepHit?")
 st.markdown(
     """

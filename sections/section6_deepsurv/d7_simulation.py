@@ -252,6 +252,42 @@ question its functional form cannot answer, and it answered anyway.
 """
     )
 
+with st.expander("🎓 Deeper statistics — reading this page like a "
+                 "simulation-study methodologist"):
+    st.markdown(
+        r"""
+A simulation study is the statistician's controlled experiment, and it has
+the same anatomy every time: a known **data-generating process** (the truth
+above), an **estimand** (here: the risk *ordering*, scored by C-index),
+competing **estimators** (Cox, DeepSurv), and **replication** to separate
+signal from Monte Carlo noise. Three habits worth taking from this page
+into your dissertation:
+
+- **Our numbers differ from the paper's in the second decimal, and they
+  should.** A C-index computed on one simulated test set is itself a random
+  variable — different seed, different draw, different value. What must
+  *reproduce* is the qualitative structure (tie under linear, collapse vs
+  ~0.65 under nonlinear), not the third decimal. When you see a paper
+  report 0.487, read it as "indistinguishable from 0.5", not as a constant
+  of nature.
+- **Where Cox's β lands is not random garbage — it's a theorem.** Under
+  misspecification, the MLE converges to the parameter of the *best
+  approximation within the model class* (the KL-projection of the truth
+  onto the model — White's quasi-MLE result). For a symmetric hill on
+  Uniform[−1,1) sensors, the best linear approximation is flat, so
+  $\hat\beta \to 0$ *with* ever-tighter confidence intervals as $n$ grows.
+  The confidence intervals are honestly reporting uncertainty about the
+  wrong quantity. Misspecification is not detectable from standard errors.
+- **The noise-sensor false positive is multiplicity, not misfortune.** With
+  8 pure-noise coefficients tested at the 5% level, the chance at least one
+  looks "significant" approaches $1 - 0.95^8 \approx 34\%$ per run. Combine
+  that with the real signal being invisible to the model, and the most
+  significant coefficient in the table is *more likely to be noise than
+  truth* — a small, vivid case for multiple-testing discipline whenever you
+  read a coefficient table.
+"""
+    )
+
 st.header("3 · The C-index, seen as a ranking")
 st.markdown(
     "The C-index is abstract; here is what it *means*. We take the 1,000 test "

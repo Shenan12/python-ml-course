@@ -172,6 +172,48 @@ st.info(
     "sceptical of anything claiming a huge leap over it."
 )
 
+with st.expander("🎓 Deeper statistics — what a Schoenfeld residual actually "
+                 "is, and how to read the test honestly"):
+    st.markdown(
+        r"""
+The residual has a lovely construction. Recall each failure's partial-
+likelihood term is a softmax over its risk set. At batter $i$'s dismissal,
+the model therefore implies an *expected* covariate value for "whoever gets
+dismissed here":
+
+$$\bar x(T_i) = \sum_{j \in \mathcal{R}(T_i)} \pi_j\, x_j, \qquad \pi_j = \frac{e^{\hat\beta^\top x_j}}{\sum_{k \in \mathcal{R}(T_i)} e^{\hat\beta^\top x_k}}$$
+
+The **Schoenfeld residual** is simply $r_i = x_i - \bar x(T_i)$ — *who
+actually got out, minus who the fitted model expected to get out*, one
+residual per dismissal, one component per covariate. (It's the same
+observed-minus-expected template as every residual you know; here the
+"expected" comes from the risk-set softmax.)
+
+Under PH these residuals are mean-zero *at every point in time* — the
+model's errors shouldn't drift as the innings progresses. So the test:
+scale the residuals (by the local covariance — "scaled Schoenfeld"), plot
+them against (a transform of) time, and test the slope. Grambsch and
+Therneau's key result is that this slope is exactly the leading term of a
+**time-varying coefficient** $\beta(t) = \beta + \theta \cdot g(t)$, so the
+test is a score test of $H_0\!: \theta = 0$. Positive slope = the
+covariate's effect *grows* with time.
+
+Two honesty clauses before you cite a p-value like {tiny:.0e}:
+
+- **With n = 25,503, significance is cheap.** A PH test's p-value measures
+  *evidence that the violation is nonzero*, not that it is *large*. At this
+  sample size even a trivial drift rejects. The bar chart of
+  window-by-window hazard ratios above is the *effect-size* view — always
+  report both, and let the ratio change (not the p-value) argue that the
+  violation matters.
+- **The test only sees the trend shape it looks for** (linear in $g(t)$ —
+  lifelines uses rank/KM transforms of time). A perfectly symmetric
+  rise-then-fall effect can slip past it, just as the U-shaped risk slipped
+  past the linear Cox fit on d7. Non-rejection is "no evidence", never
+  "PH confirmed".
+""".replace("{tiny:.0e}", f"{tests['p'].min():.0e}")
+    )
+
 st.header("4 · Seeing it: survival curves that cross")
 st.markdown(
     "The most visual symptom of non-proportional hazards is **crossing (or "

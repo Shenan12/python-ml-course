@@ -44,14 +44,11 @@ st.markdown(
 Here is the paper's central argument for why you need a nonlinear model to do
 this job. Take a standard linear Cox model with treatment as a covariate:
 
-$$\hat h(x, \tau) = \beta^\top x + \gamma \tau
-\qquad (\tau \in \{0, 1\}\ \text{is the treatment indicator})$$
+$$\hat h(x, \tau) = \beta^\top x + \gamma \tau \qquad (\tau \in \{0, 1\}\ \text{is the treatment indicator})$$
 
 Now compute the recommender function:
 
-$$\text{rec}_{10}(x) = \hat h(x, 1) - \hat h(x, 0)
-= \big(\beta^\top x + \gamma \cdot 1\big) - \big(\beta^\top x + \gamma \cdot 0\big)
-= \gamma$$
+$$\text{rec}_{10}(x) = \hat h(x, 1) - \hat h(x, 0) = \big(\beta^\top x + \gamma \cdot 1\big) - \big(\beta^\top x + \gamma \cdot 0\big) = \gamma$$
 
 **The $\beta^\top x$ terms cancel completely.** The recommendation is
 $\gamma$ — *the same number for every individual*, regardless of its
@@ -243,6 +240,45 @@ conditional risk is only a **causal** treatment effect under assumptions the
 model itself cannot check.
 """
 )
+
+with st.expander("🎓 Deeper statistics — the recommender in potential-outcomes "
+                 "language"):
+    st.markdown(
+        r"""
+Your causal inference lectures give this page a precise vocabulary. Each
+machine has two **potential lifetimes** — $T(A)$ under regime A and $T(B)$
+under regime B — and we only ever observe the one for the regime actually
+received (the *fundamental problem of causal inference*). What DeepSurv's
+$\text{rec}_{BA}(x)$ estimates is a **conditional** (covariate-specific)
+contrast between those two potential worlds, on the log-hazard scale — the
+survival cousin of the **CATE**, the conditional average treatment effect
+$\mathbb{E}[Y(1) - Y(0) \mid X = x]$.
+
+Three pieces of the framework map directly onto what you just saw:
+
+- **Effect modification is the whole point.** The linear-Cox algebra above
+  ($\text{rec} = \gamma$) is exactly the statement "no effect modification:
+  one treatment effect for the whole population". The interaction term
+  $\delta \tau x_1$ *is* an effect-modification term; DeepSurv is a
+  nonparametric effect-modification learner.
+- **Identification needs randomisation (or its stand-ins).** The KM
+  comparison above is valid because $\tau$ was assigned at random, making
+  treatment independent of the potential outcomes
+  ($\{T(A), T(B)\} \perp \tau$ — *exchangeability*). On observational data
+  you'd need the usual trio — exchangeability given $X$, positivity,
+  consistency — and tools like propensity scores to earn the same
+  comparison. A model fit cannot substitute for these assumptions; it can
+  only be *combined* with them.
+- **One hazard-scale subtlety for the road:** hazard ratios are
+  **non-collapsible** — even under perfect randomisation, the marginal
+  hazard ratio is not a simple average of covariate-specific ones, and
+  conditioning on survivors ("still at risk at $t$") subtly selects on a
+  post-treatment event. This is why serious causal-survival work often
+  reports contrasts of *survival probabilities* at a horizon rather than
+  hazard ratios. DeepHit's direct survival curves (next section) are, among
+  other things, more convenient for exactly that.
+"""
+    )
 
 show_example(
     '''import sympy as sp

@@ -101,6 +101,44 @@ silently. It is a limitation of this dataset, and an honest one to name.
 """
 )
 
+with st.expander("🎓 Deeper statistics — writing the censoring assumption "
+                 "down properly"):
+    st.markdown(
+        r"""
+Let $T$ be the (possibly unobserved) balls-until-dismissal and $C$ the
+balls-until-the-innings-ends-around-him. We observe
+$Y = \min(T, C)$ and $E = \mathbb{1}[T \le C]$ — the classic
+**random censorship model**. The assumption each estimator needs, from
+weakest to strongest:
+
+- **Kaplan–Meier (marginal curves):** $T \perp C$ *unconditionally*. The
+  right-hand chart above shows this is **false** here — censoring
+  probability varies sharply with batting position, and position also
+  predicts $T$.
+- **Cox / DeepSurv / DeepHit (covariate models):** only
+  $T \perp C \mid X$ — *conditionally* independent censoring. Given the
+  covariates (position, entry over, match situation), the residual
+  randomness in "does the innings end around him" must carry no extra
+  information about how long he'd have batted. Because position and entry
+  situation are in $X$, this is far more defensible — the *observable*
+  driver of the dependence is conditioned away.
+- What would still break it: something *unobserved* that drives both — e.g.
+  batters who accelerate when the end is near change their dismissal risk
+  *because* $C$ is close. That residual dependence is untestable from this
+  data alone (censored innings never reveal their $T$), which is why the
+  page says "state it, don't assume it silently".
+
+One more connection worth a line in a dissertation: "innings ends" is
+really a **competing risk** for "dismissed" — the not-out ending removes
+the batter from observation just as death-from-other-causes removes a
+patient. Treating a competing event as censoring is exactly the situation
+DeepHit's full multi-cause machinery (introduced on the architecture page)
+was designed for; we use the single-risk version because for *this*
+question — dismissal risk while batting — the censoring treatment is the
+standard and defensible choice.
+"""
+    )
+
 st.header("2 · The features, and why each one exists")
 st.markdown(
     """

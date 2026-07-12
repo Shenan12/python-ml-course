@@ -14,8 +14,7 @@ Now we model. We want the hazard of a *particular* machine to depend on its
 covariates $x$ (sensor readings, age, load). Cox's 1972 proposal — one of the
 most-cited papers in the history of statistics — is:
 
-$$\boxed{\;h(t \mid x) = \underbrace{h_0(t)}_{\text{baseline hazard}}
-\cdot \underbrace{\exp(\beta^\top x)}_{\text{risk score}}\;}$$
+$$\boxed{\;h(t \mid x) = \underbrace{h_0(t)}_{\text{baseline hazard}} \cdot \underbrace{\exp(\beta^\top x)}_{\text{risk score}}\;}$$
 
 Read the structure carefully, because **DeepSurv changes exactly one thing in
 this equation and nothing else**:
@@ -28,9 +27,7 @@ this equation and nothing else**:
 
 The name comes from the immediate consequence. Take two machines and divide:
 
-$$\frac{h(t \mid x_1)}{h(t \mid x_2)}
-= \frac{h_0(t)\exp(\beta^\top x_1)}{h_0(t)\exp(\beta^\top x_2)}
-= \exp\!\big(\beta^\top (x_1 - x_2)\big)$$
+$$\frac{h(t \mid x_1)}{h(t \mid x_2)} = \frac{h_0(t)\exp(\beta^\top x_1)}{h_0(t)\exp(\beta^\top x_2)} = \exp\!\big(\beta^\top (x_1 - x_2)\big)$$
 
 The baseline **cancels**. The hazard ratio between any two machines is a
 constant — *it does not depend on $t$*. Machine A is 2.3× riskier than
@@ -54,16 +51,13 @@ baseline.
 Because every machine at risk shares the same $h_0(T_i)$, it cancels top and
 bottom, leaving:
 
-$$L_i(\beta) = \frac{\exp(\beta^\top x_i)}
-{\sum_{j \in \mathcal{R}(T_i)} \exp(\beta^\top x_j)}$$
+$$L_i(\beta) = \frac{\exp(\beta^\top x_i)} {\sum_{j \in \mathcal{R}(T_i)} \exp(\beta^\top x_j)}$$
 
 where $\mathcal{R}(T_i) = \{j : T_j \ge T_i\}$ is the **risk set** — every
 machine still being watched at that moment. Multiply over all observed
 failures:
 
-$$L(\beta) = \prod_{i:\,E_i = 1} L_i(\beta), \qquad
-\ell(\beta) = \sum_{i:\,E_i=1}\Big[\beta^\top x_i -
-\log \!\!\sum_{j \in \mathcal{R}(T_i)}\!\! e^{\beta^\top x_j}\Big]$$
+$$L(\beta) = \prod_{i:\,E_i = 1} L_i(\beta), \qquad \ell(\beta) = \sum_{i:\,E_i=1}\Big[\beta^\top x_i - \log \!\!\sum_{j \in \mathcal{R}(T_i)}\!\! e^{\beta^\top x_j}\Big]$$
 
 **As a statistician, notice what this really is:** each $L_i$ is exactly a
 *softmax* — the probability of picking machine $i$ out of the risk set, with
@@ -157,9 +151,7 @@ st.markdown(
 the {len(risk_set)} machines still at risk, what was the chance it would be
 this one?*
 
-$$L_i = \\frac{{e^{{\\beta \\cdot {load[current_i]:.1f}}}}}
-{{\\sum_{{j \\in R}} e^{{\\beta \\cdot x_j}}}}
-= \\frac{{{num:.3f}}}{{{den:.3f}}} = {num / den:.3f}$$
+$$L_i = \\frac{{e^{{\\beta \\cdot {load[current_i]:.1f}}}}} {{\\sum_{{j \\in R}} e^{{\\beta \\cdot x_j}}}} = \\frac{{{num:.3f}}}{{{den:.3f}}} = {num / den:.3f}$$
 
 Three things to *do* with the sliders, because they build the intuition the
 rest of this section rests on:
@@ -238,6 +230,57 @@ print(f"AIC: {cph.AIC_partial_:.2f}")''',
 - `cph.AIC_partial_` — AIC on the partial likelihood, for comparing Cox models. (lifelines names it `AIC_partial_` for the Cox model specifically.)
 """,
 )
+
+with st.expander("🎓 Deeper statistics — why a *partial* likelihood earns "
+                 "full-likelihood treatment, and how you get $S(t\\mid x)$ "
+                 "back at the end"):
+    st.markdown(
+        r"""
+**The inference question.** We just used Wald tests, information-based
+standard errors and AIC on something that is *not* the likelihood of the
+data — pieces of it were thrown away (the actual failure *times*, the gaps
+between them, everything about $h_0$). Why is that legitimate?
+
+Cox's 1975 argument, in modern language: the log partial likelihood's
+derivative behaves exactly like a genuine **score function** — it has mean
+zero at the true $\beta$, and its variance equals the expected negative
+Hessian (the **information identity** you proved for ordinary MLE). Those
+two properties are what drive the standard MLE asymptotics, so the usual
+conclusions transfer:
+$\hat\beta \xrightarrow{d} N\big(\beta,\, \mathcal{I}(\hat\beta)^{-1}\big)$,
+Wald/score/LR tests all valid. Later work sharpened this: the partial
+likelihood estimator is **semiparametrically efficient** — no estimator that
+also refuses to model $h_0$ can beat its asymptotic variance. Discarding
+the timing information costs remarkably little, because the *ordering* of
+failures carries almost all the information about $\beta$.
+
+Two ways to see why it deserves the name "likelihood":
+
+- **Profile view:** write the full censored-data likelihood from the last
+  page, maximise over the infinite-dimensional nuisance $h_0(\cdot)$ for
+  fixed $\beta$, and plug the maximiser back in. What remains is (up to a
+  constant) the partial likelihood. So $\ell(\beta)$ *is* a profile
+  likelihood with the baseline profiled out.
+- **Rank view:** the partial likelihood is the probability of the observed
+  *order* of failures. $\beta$ only ever enters through orderings — which
+  is also exactly why the natural performance metric (C-index) is a rank
+  statistic.
+
+**Recovering absolute risk (Breslow's estimator).** The model happily ranks
+machines without $h_0$, but the moment you want an actual survival curve
+$S(t \mid x)$ you must estimate the baseline after the fact:
+
+$$\hat H_0(t) = \sum_{i:\,T_i \le t,\,E_i=1} \frac{1}{\sum_{j \in \mathcal{R}(T_i)} e^{\hat\beta^\top x_j}}, \qquad \hat S(t \mid x) = \exp\big(-\hat H_0(t)\, e^{\hat\beta^\top x}\big)$$
+
+Look at the structure: it's a Nelson–Aalen-style cumulative hazard where
+each failure counts not as $1/n_i$ but as $1$ over the risk set's *total
+risk score* — KM logic, reweighted by the fitted model. **File this away:**
+DeepSurv inherits the same two-stage recipe (rank with the network, then
+Breslow for the baseline), and `pycox` calls it `compute_baseline_hazards()`.
+DeepHit's whole pitch on the next section is to skip this second stage and
+predict the curve directly.
+"""
+    )
 
 st.header("3 · The limitation that created DeepSurv")
 st.markdown(

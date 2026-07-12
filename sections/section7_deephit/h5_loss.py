@@ -14,8 +14,7 @@ st.markdown(
 DeepHit's loss is the part people quote and rarely explain. It has **two terms
 added together**, and they are responsible for two genuinely different things:
 
-$$\mathcal{L} = \underbrace{\alpha \cdot \mathcal{L}_1}_{\text{be right}}
-\;+\; \underbrace{(1-\alpha) \cdot \mathcal{L}_2}_{\text{be in the right order}}$$
+$$\mathcal{L} = \underbrace{\alpha \cdot \mathcal{L}_1}_{\text{be right}} \;+\; \underbrace{(1-\alpha) \cdot \mathcal{L}_2}_{\text{be in the right order}}$$
 
 - $\mathcal{L}_1$ — **the likelihood term.** Did you put probability mass in the
   right place? It makes the model *calibrated*: its curves should match reality.
@@ -43,8 +42,7 @@ he'd have been dismissed in — only that it's **later than $k^*$**. So we rewar
 the model for putting mass *anywhere beyond* $k^*$, i.e. for a high survival
 probability at that point:
 
-$$\mathcal{L}_1^{\text{censored}}
-= -\log\Big(\underbrace{\textstyle\sum_{j > k^*} p_j(x)}_{= \,S(k^*)}\Big)$$
+$$\mathcal{L}_1^{\text{censored}} = -\log\Big(\underbrace{\textstyle\sum_{j > k^*} p_j(x)}_{= \,S(k^*)}\Big)$$
 
 **This is where the not-out batters do their work.** They can't say "he was
 dismissed here", but they can say *"whatever happens, it wasn't by ball 40"* —
@@ -64,9 +62,7 @@ $F$ = the CIF from the last page).
 DeepHit penalises the pairs it gets **wrong**, with a smooth, differentiable
 penalty:
 
-$$\mathcal{L}_2 = \sum_{\text{comparable } (i,j)}
-\eta\Big(F_i(k_i) - F_j(k_i)\Big),
-\qquad \eta(z) = \exp\!\left(\frac{-z}{\sigma}\right)$$
+$$\mathcal{L}_2 = \sum_{\text{comparable } (i,j)} \eta\Big(F_i(k_i) - F_j(k_i)\Big), \qquad \eta(z) = \exp\!\left(\frac{-z}{\sigma}\right)$$
 
 Look at what $\eta$ does. If the model got the pair **right**, $z > 0$, so
 $\exp(-z/\sigma)$ is small — little penalty. If it got the pair **wrong**,
@@ -173,6 +169,50 @@ This connects straight back to Section 3: the C-index measures **discrimination*
 truthful?). A model can be superb at one and terrible at the other. Report both.
 """
 )
+
+with st.expander("🎓 Deeper statistics — ℒ₁ is an old friend, ℒ₂ is a smooth "
+                 "U-statistic, and their sum is *not* a likelihood"):
+    st.markdown(
+        r"""
+**ℒ₁ you have already met — twice.** On the first survival page we wrote
+the censored-data likelihood $L = \prod_i f(T_i)^{E_i} S(T_i)^{1-E_i}$.
+Replace density with PMF ($f \to p_{k^*}$) and take the negative log, and
+you get *exactly* $\mathcal{L}_1$: $-\log p_{k^*}$ for the dismissed,
+$-\log S(k^*)$ for the not-out. So $\mathcal{L}_1$ is the discrete-time
+censored MLE objective — nothing invented, just the d1 likelihood with
+bins. (And for uncensored data it's categorical cross-entropy, closing the
+loop with the multinomial-GLM reading from the previous page.)
+
+**ℒ₂ is a smoothed C-index.** The C-index (d1) is a U-statistic: an
+average of the indicator $\mathbb{1}[\text{wrong order}]$ over comparable
+pairs. Indicators have zero gradient, so DeepHit substitutes the
+exponential $\eta(z) = e^{-z/\sigma}$ — an upper bound on the indicator
+that *is* differentiable. This is a standard move with a family history:
+logistic regression's log-loss and the SVM's hinge loss are the same trick
+applied to the 0-1 classification error, and RankBoost/RankNet apply it to
+ranking exactly as here. $\sigma$ is the **temperature**: as
+$\sigma \to 0$, $\eta$ approaches the true step (faithful, but gradients
+vanish except at the boundary — the sigmoid-saturation problem in new
+clothes); large $\sigma$ gives smooth gradients that only loosely track
+concordance. That's a bias-of-the-surrogate vs trainability trade, and
+it's why σ needs tuning at all.
+
+**And the sum is deliberately *not* a likelihood.** The moment
+$\alpha < 1$, the objective stops being the log of any probability model —
+it's a **penalised M-estimator**, likelihood plus a ranking penalty. Two
+consequences you can *see in the charts above*:
+
+1. The fitted PMFs are no longer the MLE of any distribution, so their
+   probabilities drift off-calibration as $\alpha$ falls — that's the IBS
+   panel rising as α → 0. In proper-scoring-rule language: log-loss is a
+   proper score (truth-telling is optimal), $\eta$ is not, and mixing them
+   trades honesty for order.
+2. Classical likelihood-based inference (standard errors from the Hessian,
+   likelihood-ratio tests, AIC) loses its justification for this objective.
+   You evaluate DeepHit by held-out metrics, not information criteria —
+   which is exactly what this section does.
+"""
+    )
 
 st.header("4 · The loss, coded from scratch")
 show_example(

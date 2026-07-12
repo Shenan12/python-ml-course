@@ -179,9 +179,7 @@ For MSE with a line, calculus gives the downhill directions in closed form
 (differentiate $\frac{1}{n}\sum (y_i - (w x_i + b))^2$ with respect to each
 parameter):
 
-$$\frac{\partial L}{\partial w} = -\frac{2}{n}\sum x_i\,(y_i - \hat y_i)
-\qquad
-\frac{\partial L}{\partial b} = -\frac{2}{n}\sum (y_i - \hat y_i)$$
+$$\frac{\partial L}{\partial w} = -\frac{2}{n}\sum x_i\,(y_i - \hat y_i) \qquad \frac{\partial L}{\partial b} = -\frac{2}{n}\sum (y_i - \hat y_i)$$
 
 You don't need to reproduce the differentiation — but you *should* distrust
 formulas handed to you. The snippet below verifies the gradient two

@@ -184,6 +184,39 @@ will reproduce both halves of that result yourself on the simulation page.
 """
 )
 
+with st.expander("🎓 Deeper statistics — the same point in estimation-theory "
+                 "language"):
+    st.markdown(
+        r"""
+The Cox model with linear $\beta^\top x$ is **nested** inside DeepSurv (a
+network with no hidden layers *is* $\beta^\top x$). So the comparison is a
+classic parametric-vs-flexible trade, and the standard decomposition applies
+to the risk function each model learns:
+
+$$\text{error} \;=\; \underbrace{\text{approximation error}}_{\text{can the model class express the truth?}} \;+\; \underbrace{\text{estimation error}}_{\text{how well can you fit it from } n \text{ observations?}}$$
+
+- **Truth linear** → Cox has zero approximation error *and* is the
+  (semiparametrically) efficient estimator: its $O(1/\sqrt n)$ estimation
+  error has the smallest possible constant. DeepSurv can at best match it,
+  and pays extra estimation error for capacity it can't use. Hence the
+  paper's 0.779 vs 0.778 — a tie is the *predicted* outcome, not a
+  disappointment.
+- **Truth nonlinear** → Cox's approximation error is a fixed bias that no
+  amount of data removes ($\hat\beta$ converges, quickly and with beautiful
+  confidence intervals, to the best *linear* approximation of a non-linear
+  truth — precisely wrong). DeepSurv's approximation error is ~0 and its
+  estimation error shrinks with $n$. Flexibility wins, *if* $n$ and the
+  regularisation can control the variance.
+
+That last clause is the Faraggi–Simon story in one line: in 1995 the
+estimation-error term was effectively unbounded (no dropout, no weight
+decay, optimisers that couldn't find the minimum), so the flexible model
+lost even when the truth was nonlinear. The 2018 toolkit didn't change the
+model class — it shrank the estimation error until the approximation-error
+advantage could finally show.
+"""
+    )
+
 show_example(
     '''# The Faraggi-Simon network and DeepSurv, side by side in code.
 # Spot the architectural difference. (Hint: there barely is one.)

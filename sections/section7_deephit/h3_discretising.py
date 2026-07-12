@@ -183,6 +183,46 @@ number on the **validation** set, not the test set.
 """
 )
 
+with st.expander("🎓 Deeper statistics — discrete-time survival is older than "
+                 "you think, and better-behaved than it looks"):
+    st.markdown(
+        r"""
+Discretising time is not a deep-learning hack — it's the **life table**,
+the oldest object in survival analysis (actuaries have binned lifetimes
+into years since the 1600s). The discrete-time framework has its own clean
+calculus, and it's worth having:
+
+- **Discrete hazard:** $h_k = P(T = k \mid T \ge k)$ — the chance the
+  dismissal falls in bin $k$ given the batter reached it. Unlike the
+  continuous hazard, this *is* a probability.
+- **Survival:** $S(k) = P(T > k) = \prod_{j \le k} (1 - h_j)$ — survive
+  each bin in turn. (Recognise the form? The Kaplan–Meier estimator is
+  exactly this with $\hat h_j = d_j/n_j$ — KM *is* discrete-time survival
+  analysis where every observed failure time is its own bin.)
+- **PMF:** $p_k = P(T = k) = h_k \prod_{j<k}(1 - h_j)$ — fail in bin $k$ =
+  survive $k\!-\!1$ bins, then fail. Geometric-distribution logic with a
+  different $h$ each step.
+
+These identities mean "predict the PMF" (DeepHit's choice) and "predict the
+hazards" (the classical *discrete-time logistic hazard* model, and pycox's
+`LogisticHazard`) are two parametrisations of the same object — you can
+always convert one into the other. DeepHit's softmax predicts all the
+$p_k$ jointly; a hazard model predicts $K$ conditional Bernoullis. Neither
+assumes proportionality — discretisation alone already buys you freedom
+from PH.
+
+**And the quantile trick is one you already know.** Placing bin edges at
+quantiles of the event distribution is the **probability integral
+transform** in action: if the edges sit at the
+$\tfrac{1}{K}, \tfrac{2}{K}, \dots$ quantiles of $T$, then the bin index of an event is
+(approximately) uniform — every class balanced by construction. It's the
+same reasoning as histogram equalisation, or using ranks instead of raw
+values: statistics on a skewed variable behave better after a monotone map
+to uniformity, and no information the model needs is lost because the map
+is invertible on the bins.
+"""
+    )
+
 st.header("4 · In code")
 show_example(
     experiments.SNIPPETS["h3_binning"],

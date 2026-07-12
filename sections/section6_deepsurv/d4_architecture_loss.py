@@ -17,8 +17,7 @@ $$h(t \mid x) = h_0(t) \cdot \exp(\underbrace{\beta^\top x}_{\text{linear}})$$
 
 DeepSurv says:
 
-$$h(t \mid x) = h_0(t) \cdot
-\exp(\underbrace{\hat h_\theta(x)}_{\text{a neural network}})$$
+$$h(t \mid x) = h_0(t) \cdot \exp(\underbrace{\hat h_\theta(x)}_{\text{a neural network}})$$
 
 That's it. **Everything else is inherited from Cox**: still a proportional
 hazards model, still no baseline hazard estimated, still fitted by maximising
@@ -28,9 +27,7 @@ predictor*.
 The loss, exactly as it appears in Katzman et al. (2018) — the average
 negative log partial likelihood plus an L2 penalty:
 
-$$\ell(\theta) := -\frac{1}{N_{E=1}}\sum_{i:\,E_i = 1}
-\left[\hat h_\theta(x_i) - \log\!\!\sum_{j \in \mathcal{R}(T_i)}\!\!
-e^{\hat h_\theta(x_j)}\right] \;+\; \lambda \cdot \|\theta\|_2^2$$
+$$\ell(\theta) := -\frac{1}{N_{E=1}}\sum_{i:\,E_i = 1} \left[\hat h_\theta(x_i) - \log\!\!\sum_{j \in \mathcal{R}(T_i)}\!\! e^{\hat h_\theta(x_j)}\right] \;+\; \lambda \cdot \|\theta\|_2^2$$
 
 Every symbol should now be familiar:
 - the bracket is **exactly Cox's partial likelihood term** from two pages ago,
@@ -206,6 +203,42 @@ a discrepancy between "the Cox model as taught in statistics" and "the Cox
 loss as implemented in deep-learning libraries", and few students notice it.
 """
 )
+
+with st.expander("🎓 Deeper statistics — two more things a viva could probe: "
+                 "mini-batches, and what the L2 penalty *is*"):
+    st.markdown(
+        r"""
+**1 · The partial likelihood is not a sum over observations — and SGD
+quietly assumes it is.** Every loss you've minimised so far decomposes as
+$\ell(\theta) = \sum_i \ell_i(\theta)$ with one independent term per data
+point; that's what makes mini-batch gradients *unbiased* estimates of the
+full gradient, which is the entire justification for SGD. The Cox loss
+breaks this: each failure's term contains a **log-sum over its whole risk
+set**, coupling every observation to every other. When deep-survival code
+trains on mini-batches (as pycox does for large data), the risk set is
+silently redefined as *"those still at risk **within this batch**"* — a
+random subsample of the true denominator. The resulting gradient is **not**
+an unbiased estimate of the full-data gradient (a log of a sample mean is a
+biased estimate of the log of the population mean — Jensen's inequality).
+In practice it works fine because the bias shrinks with batch size and the
+ranking signal survives subsampling, but you should know it's an
+approximation being made, not a theorem. On our small datasets we sidestep
+it entirely by training full-batch — every risk set is exact.
+
+**2 · Ridge is a Gaussian prior wearing a loss-function costume.** Adding
+$\lambda\|\theta\|_2^2$ to a negative log-likelihood is *algebraically
+identical* to putting an independent $N(0, \sigma^2)$ prior on every weight
+(with $\lambda \propto 1/\sigma^2$) and finding the **MAP estimate** —
+maximise $\log p(\text{data}\mid\theta) + \log p(\theta)$ and the second
+term *is* $-\lambda\|\theta\|^2$ plus a constant. So DeepSurv's loss is a
+penalised partial likelihood, and a Bayesian would read the whole objective
+as "posterior mode under a Gaussian prior on the network's weights". This
+also explains *why* weight decay fights overfitting in likelihood language:
+it shrinks the effective parameter count, exactly as ridge regression
+shrinks coefficients — the same mathematics you met on the regularization
+page, now applied to $\theta$ instead of $\beta$.
+"""
+    )
 
 st.header("3 · Watch the loss respond to the network's opinions")
 st.markdown(

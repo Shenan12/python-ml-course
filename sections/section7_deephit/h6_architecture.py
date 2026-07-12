@@ -171,6 +171,52 @@ st.info(
     "form is for."
 )
 
+with st.expander("🎓 Deeper statistics — the three classical facts every "
+                 "competing-risks analysis stands on"):
+    st.markdown(
+        r"""
+**1 · Two different "hazards", and the trap between them.** With causes
+$c = 1, \dots, C$, define the **cause-specific hazard**
+$h_c(t) = \lim_{\Delta\to 0} P(t \le T < t+\Delta,\ \text{cause}=c \mid T \ge t)/\Delta$
+— the instantaneous rate of going out *bowled*, among those still batting.
+The trap: $\exp(-\int_0^t h_c)$ is **not** the probability of being
+dismissed by cause $c$ — it's the survival in a fantasy world where the
+other causes were switched off. The quantity with a real-world meaning is
+the **cumulative incidence function**
+$F_c(t) = \int_0^t h_c(u)\, S(u)\, du$, where $S(u)$ is survival from
+*all* causes — you can only be bowled at $u$ if nothing else got you
+first. Note the consequence: $F_c$ depends on **every** cause's hazard,
+so a covariate can raise the *hazard* of "caught" yet lower its
+*incidence* (by raising "bowled" even more). This is why naive
+one-cause-at-a-time KM curves ("1 − KM treating other causes as
+censoring") systematically **overestimate** each cause's probability —
+their complements sum to more than 1.
+
+**2 · The independence of latent lifetimes is untestable.** The classical
+formulation imagines latent times
+$(T_{\text{bowled}}, T_{\text{caught}}, \dots)$ with only the minimum
+observed. Tsiatis (1975)
+proved the joint distribution of those latent times is **not identifiable**
+from competing-risks data — for any dependent model there is an
+independent one fitting the observations identically. So "treat catches as
+independent censoring when modelling bowled" isn't just dubious, it's an
+assumption *no amount of this data can check*. The escape is to stop
+asking about latent times and work with estimable quantities — the
+$h_c$'s and $F_c$'s — which is exactly what both Fine–Gray and DeepHit do.
+
+**3 · Where DeepHit sits in the classical family tree.** Fine–Gray puts a
+proportional-hazards structure on a transformation of $F_c$ (the
+*subdistribution hazard*), keeping interpretable coefficients and
+inheriting a PH-style assumption. DeepHit instead parameterises the joint
+PMF over (cause, bin) directly with one softmax — no proportionality on
+any scale, automatic $\sum_c F_c(\infty) \le 1$ coherence by construction,
+no coefficients to report. It is the same trade you've now seen twice
+(Cox → DeepSurv, and here Fine–Gray → DeepHit): swap an interpretable
+restricted form for a flexible black box, and pay in data, tuning, and
+interpretability.
+"""
+    )
+
 st.header("3 · Building the model in code")
 show_example(
     '''import torchtuples as tt

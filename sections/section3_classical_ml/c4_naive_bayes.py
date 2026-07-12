@@ -12,9 +12,7 @@ st.markdown(
 As a statistics student you arrive at this page with home advantage: Naive
 Bayes is just **Bayes' theorem used as a classifier**.
 
-$$P(\text{disease} \mid \text{biomarkers}) \;=\;
-\frac{P(\text{biomarkers} \mid \text{disease}) \; P(\text{disease})}
-     {P(\text{biomarkers})}$$
+$$P(\text{disease} \mid \text{biomarkers}) \;=\; \frac{P(\text{biomarkers} \mid \text{disease}) \; P(\text{disease})} {P(\text{biomarkers})}$$
 
 Read as a diagnosis recipe: start from the **prior** (how common is the
 disease among training patients?), multiply by the **likelihood** (how
@@ -26,8 +24,7 @@ The catch: the likelihood $P(A, B \mid \text{class})$ is a *joint*
 distribution, and with many features it's hopeless to estimate. The
 **"naive" step** assumes features are independent within each class:
 
-$$P(A, B \mid \text{class}) \;\approx\;
-P(A \mid \text{class}) \cdot P(B \mid \text{class})$$
+$$P(A, B \mid \text{class}) \;\approx\; P(A \mid \text{class}) \cdot P(B \mid \text{class})$$
 
 — so we only need each feature's distribution *separately*. **Gaussian**
 Naive Bayes models each of those as a normal distribution, fitted with

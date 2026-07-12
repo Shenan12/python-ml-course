@@ -77,9 +77,7 @@ decreases.
 
 **The hazard function** — the new idea, and the one everything hinges on:
 
-$$h(t) = \lim_{\Delta t \to 0}
-\frac{P(t \le T < t + \Delta t \mid T \ge t)}{\Delta t}
-= \frac{f(t)}{S(t)}$$
+$$h(t) = \lim_{\Delta t \to 0} \frac{P(t \le T < t + \Delta t \mid T \ge t)}{\Delta t} = \frac{f(t)}{S(t)}$$
 
 "given the machine has survived to time $t$, the *instantaneous rate* of
 failing right now." It's a **conditional** rate, not a probability — it can
@@ -92,6 +90,41 @@ Know one, know the other. Play with the hazard below and watch the survival
 curve respond:
 """
 )
+
+with st.expander("🎓 Deeper statistics — the likelihood of censored data "
+                 "(the foundation for every loss in Sections 6 and 7)"):
+    st.markdown(
+        r"""
+How does a censored observation *formally* enter a model? Through the
+likelihood. For machine $i$ with recorded time $T_i$ and event flag
+$E_i$:
+
+- if it **failed** ($E_i = 1$), it contributes the density: $f(T_i)$ — "the lifetime was exactly $T_i$";
+- if it was **censored** ($E_i = 0$), it contributes the survival function: $S(T_i)$ — "the lifetime exceeds $T_i$", which is *all we know*.
+
+So the likelihood of the whole sample factorises as
+
+$$L = \prod_{i=1}^{n} f(T_i)^{E_i}\, S(T_i)^{1-E_i} = \prod_{i=1}^{n} h(T_i)^{E_i}\, S(T_i)$$
+
+(the second form uses $f = h \cdot S$ — hazard times survival). This one
+line is the entire field in miniature: **maximum likelihood, where censored
+units contribute probability-of-surviving instead of density-of-failing.**
+Every loss function you will meet from here on is a version of it — the Cox
+*partial* likelihood eliminates $h_0$ from it, DeepSurv's loss is that
+partial likelihood with a network inside, and DeepHit's $\mathcal{L}_1$ is
+its exact discrete-time analogue.
+
+**The assumption that makes this valid:** censoring must be
+**non-informative** (independent censoring) — the *reason* a machine leaves
+the study must carry no information about its residual lifetime.
+M4 was sold, which is fine *if* buyers don't systematically pick
+soon-to-fail machines. If censoring is informative (e.g. engineers withdraw
+machines that sound like they're about to fail), the factorisation above is
+simply the wrong likelihood and **every** method on these pages — KM, Cox,
+DeepSurv, DeepHit — inherits the bias. No amount of neural network fixes a
+wrong likelihood.
+"""
+    )
 
 shape = st.radio(
     "hazard shape",
@@ -157,6 +190,38 @@ Below, the estimator is computed on our 6 machines by hand *and* by
 `lifelines`, live:
 """
 )
+
+with st.expander("🎓 Deeper statistics — why KM is *the* nonparametric MLE, "
+                 "and Greenwood's variance"):
+    st.markdown(
+        r"""
+"Non-parametric MLE" is a real theorem, not a slogan. Allow the distribution
+of $T$ to be *anything* (mass allowed at every observed time), write the
+censored-data likelihood from the expander above, and maximise. The maximiser
+puts hazard mass only at observed failure times, with the discrete hazard at
+time $t_i$ estimated by exactly what you'd guess:
+
+$$\hat h_i = \frac{d_i}{n_i} \quad\text{— failures over at-risk, a binomial proportion.}$$
+
+The KM product $\hat S(t) = \prod_{t_i \le t}(1 - \hat h_i)$ is then just the
+discrete version of $S = \exp(-\int h)$: survive each failure time in turn.
+So KM is what maximum likelihood gives you when you refuse to assume a
+distribution — the same estimator-from-principle logic as the sample mean
+being the MLE of a normal mean.
+
+Because each $\hat h_i$ is a binomial proportion, the delta method gives the
+classic **Greenwood formula** for the variance of the whole curve:
+
+$$\widehat{\mathrm{Var}}\big(\hat S(t)\big) = \hat S(t)^2 \sum_{t_i \le t} \frac{d_i}{n_i (n_i - d_i)}$$
+
+— which is where the confidence band `lifelines` draws around a KM curve
+comes from. Note what drives it: the band widens **to the right**, because
+late in the study $n_i$ has been eaten away by earlier failures *and* by
+censoring. Censoring costs you nothing in bias (if non-informative) but
+plenty in **variance** — you see that trade every time a survival curve's
+band flares out at the tail.
+"""
+    )
 
 T = np.array([4, 12, 7, 5, 11, 12])
 E = np.array([1, 0, 1, 0, 1, 0])
@@ -242,6 +307,34 @@ section — is a C-index. Here it is computed from scratch, and checked against
 `lifelines`:
 """
 )
+
+with st.expander("🎓 Deeper statistics — the C-index is a U-statistic "
+                 "(and cousin of Kendall's τ)"):
+    st.markdown(
+        r"""
+Strip the censoring away for a second. "Probability a random pair is ranked
+correctly" is exactly the estimand of the **Mann–Whitney U statistic**, and
+the C-index is its estimator: an average of a 0/1 *kernel* over all pairs —
+a **U-statistic**. That buys you real theory for free: U-statistics are
+unbiased for their estimand and asymptotically normal, which is why papers
+can put standard errors on C-indexes.
+
+Three consequences worth carrying around:
+
+1. **AUC is the special case** where "time" is binary (event/no event) — the
+   same statistic, so your intuition for AUC (0.5 = coin flip, threshold-free,
+   only ranks matter) transfers wholesale.
+2. It's a linear transform of **Kendall's τ** between predicted risk and
+   failure time ($C \approx (\tau + 1)/2$) — the C-index is rank correlation
+   wearing a survival costume.
+3. **Censoring makes the pair set data-dependent**: Harrell's C averages over
+   *comparable* pairs only, and which pairs are comparable depends on the
+   censoring distribution. So two studies of the same model with different
+   censoring patterns get different C-indexes — a subtle non-comparability
+   that the IPCW-weighted variants (Uno's C) exist to fix. The DeepHit page
+   on evaluation returns to this with the time-dependent $C^{td}$.
+"""
+    )
 show_example(
     '''import numpy as np
 from lifelines.utils import concordance_index

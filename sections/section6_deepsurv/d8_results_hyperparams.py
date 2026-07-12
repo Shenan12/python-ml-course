@@ -235,6 +235,41 @@ st.markdown(
 """
 )
 
+with st.expander("🎓 Deeper statistics — the winner's curse, in order-statistic "
+                 "terms"):
+    st.markdown(
+        r"""
+Why exactly is "best of 20 by validation score" optimistic *even about the
+winner itself*? Write each trial's validation C-index as
+$\hat C_k = C_k + \varepsilon_k$: its true performance plus evaluation
+noise (finite validation set). Selecting the maximum selects jointly on
+good $C_k$ **and** lucky $\varepsilon_k$, and the expectation of a maximum
+exceeds the maximum of expectations:
+
+$$\mathbb{E}\big[\max_k (C_k + \varepsilon_k)\big] \;>\; \max_k C_k \quad\text{whenever the noise isn't degenerate.}$$
+
+So the winner's *reported validation score* overstates its *true* skill —
+the *winner's curse*, the same order-statistics fact that makes the best
+fund of 20 look better than it is and the most significant of 8 noise
+coefficients on the last page look "real". Consequences you can act on:
+
+- **The winner's validation C-index is spent.** It selected the model; it
+  can no longer measure it. The unbiased read is the untouched test set —
+  which is why the table reports both, and why they usually disagree in the
+  humble direction.
+- **More trials sharpen the curse.** As $K$ grows, $\mathbb{E}[\max_k \varepsilon_k]$
+  grows (roughly like $\sqrt{2\log K}\,\sigma$ for Gaussian noise), so a
+  bigger search needs a *better* validation estimate to be trustworthy —
+  which is exactly why the paper selects with **3-fold cross-validation**
+  (averaging 3 folds shrinks $\sigma$ by $\sqrt 3$) rather than one split.
+- **The same algebra polices literature reviews.** "Best method of 12 on
+  benchmark X" carries the same upward bias between papers as between our
+  20 trials. When a method's margin is smaller than the benchmark's
+  evaluation noise, the league table is mostly ordering the
+  $\varepsilon_k$'s.
+"""
+    )
+
 st.header("3 · The search loop in code")
 show_example(
     experiments.SNIPPETS["d8_example"],

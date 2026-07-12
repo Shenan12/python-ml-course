@@ -20,8 +20,7 @@ between every training point, a polynomial needs coefficients like
 +40,000 here, −90,000 there — huge values delicately cancelling each other.
 Wild coefficients ⇒ wild wiggles. So we add a fine to the loss:
 
-$$\\text{new loss} = \\underbrace{\\text{MSE}}_{\\text{fit the data}}
-\\; + \\; \\lambda \\underbrace{\\sum_j w_j^2}_{\\text{fine for big weights}}$$
+$$\\text{new loss} = \\underbrace{\\text{MSE}}_{\\text{fit the data}} \\; + \\; \\lambda \\underbrace{\\sum_j w_j^2}_{\\text{fine for big weights}}$$
 
 The sum of *squared* weights is the **L2 penalty** ("ridge" is linear
 regression + L2). The knob **λ** (lambda; called `alpha` in scikit-learn)

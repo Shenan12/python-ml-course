@@ -14,8 +14,7 @@ st.markdown(
 Time is now $K$ bins. The network outputs $K$ raw numbers (logits) — and a
 **softmax** turns them into a probability distribution:
 
-$$P(\text{dismissed in bin } k \mid x)
-= \frac{e^{o_k(x)}}{\sum_{j=1}^{K} e^{o_j(x)}}$$
+$$P(\text{dismissed in bin } k \mid x) = \frac{e^{o_k(x)}}{\sum_{j=1}^{K} e^{o_j(x)}}$$
 
 You met softmax on the activations page as "the multi-class classifier's output
 layer". Here it is doing exactly the same job — the "classes" are just *time
@@ -167,6 +166,44 @@ The cost is equally real, and you should be able to state it:
   inside the same bin. Discretisation is *lossy*, permanently.
 """
 )
+
+with st.expander("🎓 Deeper statistics — DeepHit is a multinomial GLM at "
+                 "heart, and it treats time as *nominal*"):
+    st.markdown(
+        r"""
+Strip the hidden layers away and look at what remains: $K$ categories, a
+linear score per category, a softmax link. That is **multinomial logistic
+regression** — a GLM you've fitted in coursework. DeepHit is exactly that
+model with a learned, nonlinear feature map in front: *multinomial
+regression on neural-network features, over time-bin categories* (plus a
+censoring-aware likelihood, next page). Placing it in the GLM family is
+more than tidiness — it tells you what the output layer's weights are
+(per-bin log-odds contributions) and why the loss on the next page will
+turn out to be categorical cross-entropy.
+
+But notice what the softmax *doesn't* know: **that the bins are ordered.**
+To a softmax, bin 3 and bin 17 are just different labels — permute the
+columns and nothing in the likelihood changes. Time bins are **ordinal**,
+and statistics has dedicated machinery for ordinal outcomes (the
+proportional-odds model, continuation-ratio models — the latter being
+precisely the discrete-hazard factorisation from the previous page).
+DeepHit's choice to ignore the ordering in its *architecture* has real
+consequences:
+
+- nothing in the model *encourages* smooth PMFs — mass can zigzag across
+  adjacent bins, and with little data it will (you can sometimes see mild
+  zigzag in the PMF panel above);
+- the information that "being wrong by one bin is better than being wrong
+  by ten" is invisible to the likelihood term.
+
+The DeepHit authors knew this — it is one honest way to read *why the
+ranking loss exists*: $\mathcal{L}_2$ (next page) reintroduces the
+ordering of time through the back door, by penalising mis-ordered *pairs*
+rather than by constraining the architecture. Keep this frame; it makes
+the two-part loss feel less like an arbitrary bolt-on and more like a
+repair to a known omission.
+"""
+    )
 
 st.header("3 · In code — softmax to survival, by hand")
 show_example(
