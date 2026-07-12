@@ -206,6 +206,14 @@ make that work. If you fork/redeploy, keep them:
    project folder may be read-only; writing there is what causes
    `PermissionError` crashes. If you add new pages, follow the same rule:
    never write into the repo folder at runtime.
+6. **`utils/compat.py` must stay imported first** (app.py and the
+   `_experiments` modules do this). It fixes two libraries that assume they
+   can write anywhere: pycox creates a folder *inside site-packages* the
+   moment it is imported, and torchtuples' `EarlyStopping` saves its weight
+   checkpoint into the current working directory. Both locations are
+   read-only on the cloud; compat redirects both to temp. Without it, every
+   DeepSurv/DeepHit page dies with `PermissionError` before rendering
+   anything.
 
 Heads-up on expectations: the heavy pages show **precomputed results**
 everywhere, so the deployed app is fast. The ▶ "Run live" buttons genuinely

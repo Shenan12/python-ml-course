@@ -8,15 +8,16 @@ buttons. Every model is deliberately small (two 32-node layers, ~100 epochs on
 
 from __future__ import annotations
 
-import numpy as np
-import pandas as pd
-import scipy.integrate as _si
-import torch
-import torchtuples as tt
+# MUST come before pycox/torchtuples: redirects their scratch files to temp so
+# the app also runs on read-only deployments (Streamlit Cloud). See utils/compat.
+from utils import compat
 
-# pycox still calls scipy.integrate.simps, which SciPy removed. Alias it.
-if not hasattr(_si, "simps"):
-    _si.simps = _si.simpson
+import numpy as np  # noqa: E402
+import pandas as pd  # noqa: E402
+import torch  # noqa: E402
+import torchtuples as tt  # noqa: E402
+
+compat.patch_torchtuples()  # EarlyStopping checkpoints -> temp, not repo dir
 
 from lifelines import CoxPHFitter, KaplanMeierFitter  # noqa: E402
 from lifelines.statistics import proportional_hazard_test  # noqa: E402

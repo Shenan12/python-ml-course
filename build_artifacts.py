@@ -36,6 +36,7 @@ import warnings  # noqa: E402
 
 warnings.filterwarnings("ignore")
 
+from utils import compat  # noqa: E402, F401  (before pycox/torchtuples)
 from sections.section4_pyspark import _experiments as S  # noqa: E402
 from sections.section6_deepsurv import _experiments as X  # noqa: E402
 from sections.section7_deephit import _experiments as H  # noqa: E402

@@ -18,15 +18,22 @@ apart — and `utils.artifacts.code_hash` enforces that with a checksum.
 
 from __future__ import annotations
 
-import numpy as np
-import pandas as pd
-import torch
-import torchtuples as tt
-from lifelines import CoxPHFitter, KaplanMeierFitter
-from lifelines.utils import concordance_index
-from pycox.models import CoxPH
+# MUST come before pycox/torchtuples: redirects their scratch files to temp so
+# the app also runs on read-only deployments (Streamlit Cloud). See utils/compat.
+from utils import compat
 
-from utils.mockdata import machines, machines_treatment
+import numpy as np  # noqa: E402
+import pandas as pd  # noqa: E402
+import torch  # noqa: E402
+import torchtuples as tt  # noqa: E402
+
+compat.patch_torchtuples()  # EarlyStopping checkpoints -> temp, not repo dir
+
+from lifelines import CoxPHFitter, KaplanMeierFitter  # noqa: E402
+from lifelines.utils import concordance_index  # noqa: E402
+from pycox.models import CoxPH  # noqa: E402
+
+from utils.mockdata import machines, machines_treatment  # noqa: E402
 
 # The slider options the pages offer. build_artifacts.py precomputes every
 # combination of these, so every slider position loads instantly.

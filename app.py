@@ -5,6 +5,11 @@ Run with:  streamlit run app.py
 
 import streamlit as st
 
+# Redirects pycox/torchtuples scratch files to the temp dir. Without this,
+# their import-time writes crash every Section 6/7 page on Streamlit Cloud,
+# where the repo mount and site-packages are read-only.
+from utils import compat  # noqa: F401
+
 st.set_page_config(
     page_title="Python → ML Course",
     page_icon="🎓",
